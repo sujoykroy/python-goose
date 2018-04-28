@@ -94,7 +94,8 @@ class Configuration(object):
 
         # set the local storage path
         # make this configurable
-        self.local_storage_path = os.path.join(tempfile.gettempdir(), 'goose')
+        #self.local_storage_path = os.path.join(tempfile.gettempdir(), 'goose')
+        self.local_storage_path = ""#GAE does allow tempfilegettempdir
 
         # http timeout
         self.http_timeout = HTTP_DEFAULT_TIMEOUT
