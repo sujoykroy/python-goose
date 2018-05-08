@@ -32,16 +32,22 @@ from goose.image import LocallyStoredImage
 class ImageUtils(object):
 
     @classmethod
-    def get_image_dimensions(self, identify_program, path):
+    def get_image_dimensions(self, identify_program, path, config):
         image_details = ImageDetails()
-        try:
-            image = Image.open(path)
-            image_details.set_mime_type(image.format)
-            width, height = image.size
-            image_details.set_width(width)
-            image_details.set_height(height)
-        except IOError:
-            image_details.set_mime_type('NA')
+        if config and config.file_handler:
+            image_info = config.file_handler.get_image_info(path)
+            image_details.set_mime_type(image_info['format'])
+            image_details.set_width(image_info['width'])
+            image_details.set_height(image_info['height'])
+        else:
+            try:
+                image = Image.open(path)
+                image_details.set_mime_type(image.format)
+                width, height = image.size
+                image_details.set_width(width)
+                image_details.set_height(height)
+            except IOError:
+                image_details.set_mime_type('NA')
         return image_details
 
     @classmethod
@@ -79,11 +85,17 @@ class ImageUtils(object):
     @classmethod
     def read_localfile(self, link_hash, src, config):
         local_image_name = self.get_localfile_name(link_hash, src, config)
-        if os.path.isfile(local_image_name):
-            identify = config.imagemagick_identify_path
-            image_details = self.get_image_dimensions(identify, local_image_name)
-            file_extension = self.get_mime_type(image_details)
+        if config.file_handler:
+            bytes = config.file_handler.get_file_size(local_image_name)
+        elif os.path.isfile(local_image_name):
             bytes = os.path.getsize(local_image_name)
+        else:
+            bytes = 0
+
+        if bytes > 0:
+            identify = config.imagemagick_identify_path
+            image_details = self.get_image_dimensions(identify, local_image_name, config)
+            file_extension = self.get_mime_type(image_details)
             return LocallyStoredImage(
                 src=src,
                 local_filename=local_image_name,
@@ -98,8 +110,13 @@ class ImageUtils(object):
     @classmethod
     def write_localfile(self, entity, link_hash, src, config):
         local_path = self.get_localfile_name(link_hash, src, config)
-        f = open(local_path, 'wb')
+
+        if config.file_handler:
+            f = config.file_handler.open(local_path, 'wb')
+        else:
+            f = open(local_path, 'wb')
         f.write(entity)
+
         f.close()
         return self.read_localfile(link_hash, src, config)
 
