@@ -81,11 +81,19 @@ class Parser(object):
         selector = 'descendant-or-self::%s' % (tag or '*')
         if attr and value:
             selector = '%s[re:test(@%s, "%s", "i")]' % (selector, attr, value)
+        elif attr:
+            selector = '%s[@%s]' % (selector, attr)
+            print(selector)
         elems = node.xpath(selector, namespaces={"re": NS})
         # remove the root node
         # if we have a selection tag
         if node in elems and (tag or childs):
             elems.remove(node)
+        return elems
+
+    @classmethod
+    def getElementsByXPath(self, node, xpath):
+        elems = node.xpath(xpath)
         return elems
 
     @classmethod

@@ -36,6 +36,7 @@ from goose.extractors.tags import TagsExtractor
 from goose.extractors.opengraph import OpenGraphExtractor
 from goose.extractors.publishdate import PublishDateExtractor
 from goose.extractors.metas import MetasExtractor
+from goose.extractors.microdata import MicroDataExtractor
 from goose.cleaners import StandardDocumentCleaner
 from goose.outputformatters import StandardOutputFormatter
 
@@ -102,6 +103,9 @@ class Crawler(object):
         # image extrator
         self.image_extractor = self.get_image_extractor()
 
+        #microdata extractor
+        self.microdata_extractor = self.get_microdata_extractor();
+
         # html fetcher
         self.htmlfetcher = HtmlFetcher(self.config)
 
@@ -143,6 +147,7 @@ class Crawler(object):
         self.article.meta_keywords = metas['keywords']
         self.article.canonical_link = metas['canonical']
         self.article.domain = metas['domain']
+        self.article.metatags = metas['metatags']
 
         # tags
         self.article.tags = self.tags_extractor.extract()
@@ -188,6 +193,8 @@ class Crawler(object):
 
             # clean_text
             self.article.cleaned_text = self.formatter.get_formatted_text()
+
+        self.article.microdata = self.microdata_extractor.extract()
 
         # cleanup tmp file
         self.relase_resources()
@@ -249,6 +256,9 @@ class Crawler(object):
     def get_video_extractor(self):
         return VideoExtractor(self.config, self.article)
 
+    def get_microdata_extractor(self):
+        return MicroDataExtractor(self.config, self.article)
+
     def get_formatter(self):
         return StandardOutputFormatter(self.config, self.article)
 
@@ -263,6 +273,8 @@ class Crawler(object):
         return StandardContentExtractor(self.config, self.article)
 
     def relase_resources(self):
+        #TODO
+        # Add self.config.file_handler code to perform cleanup
         path = os.path.join(self.config.local_storage_path, '%s_*' % self.article.link_hash)
         for fname in glob.glob(path):
             try:

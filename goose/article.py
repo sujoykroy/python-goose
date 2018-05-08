@@ -46,6 +46,9 @@ class Article(object):
         # meta keywords field in the HTML source
         self.meta_keywords = u""
 
+        #all meta informations
+        self.metatags = {}
+
         # The canonical link of this article if found in the meta data
         self.canonical_link = u""
 
@@ -79,6 +82,9 @@ class Article(object):
 
         # hold author names
         self.authors = []
+
+        # hold microdata
+        self.microdata = {}
 
         # stores the final URL that we're going to try
         # and fetch content against, this would be expanded if any
