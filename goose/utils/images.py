@@ -36,9 +36,12 @@ class ImageUtils(object):
         image_details = ImageDetails()
         if config and config.file_handler:
             image_info = config.file_handler.get_image_info(path)
-            image_details.set_mime_type(image_info['format'])
-            image_details.set_width(image_info['width'])
-            image_details.set_height(image_info['height'])
+            if image_info:
+                image_details.set_mime_type(image_info['format'])
+                image_details.set_width(image_info['width'])
+                image_details.set_height(image_info['height'])
+            else:
+                image_details.set_mime_type('NA')
         else:
             try:
                 image = Image.open(path)
