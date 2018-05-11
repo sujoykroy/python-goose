@@ -10,6 +10,8 @@ class MicroDataExtractor(BaseExtractor):
 
         for node in nodes:
             item_type = self.parser.getAttribute(node, 'itemtype')
+            if not item_type:
+                continue
             item_type = item_type.lower().split("/")[-1]
             if item_type not in item_scopes:
                 item_scopes[item_type] = []
