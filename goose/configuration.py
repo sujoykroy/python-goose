@@ -25,12 +25,14 @@ import tempfile
 from goose.text import StopWords
 from goose.parsers import Parser
 from goose.parsers import ParserSoup
+from goose.parsers import ParserXML
 from goose.version import __version__
 
 HTTP_DEFAULT_TIMEOUT = 30
 
 AVAILABLE_PARSERS = {
-    'lxml': Parser,
+    'html': Parser,
+    'lxml': ParserXML,
     'soup': ParserSoup,
 }
 
@@ -90,7 +92,7 @@ class Configuration(object):
 
         # Parser type
         self.available_parsers = AVAILABLE_PARSERS.keys()
-        self.parser_class = 'lxml'
+        self.parser_class = 'html'
 
         # set the local storage path
         # make this configurable
@@ -106,6 +108,7 @@ class Configuration(object):
         self.file_handler = None
 
     def get_parser(self):
+        print("self.parser_class", self.parser_class)
         return AVAILABLE_PARSERS[self.parser_class]
 
     def get_additionaldata_extractor(self):

@@ -86,6 +86,9 @@ class Article(object):
         # hold microdata
         self.microdata = {}
 
+        # hold vcards
+        self.hcards = []
+
         # stores the final URL that we're going to try
         # and fetch content against, this would be expanded if any
         self.final_url = u""
@@ -133,6 +136,7 @@ class Article(object):
             "movies": [],
             "links": self.links,
             "authors": self.authors,
+            "hcards": self.hcards,
             "publish_date": self.publish_date
         }
 

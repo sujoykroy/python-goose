@@ -37,6 +37,7 @@ from goose.extractors.opengraph import OpenGraphExtractor
 from goose.extractors.publishdate import PublishDateExtractor
 from goose.extractors.metas import MetasExtractor
 from goose.extractors.microdata import MicroDataExtractor
+from goose.extractors.hcard import HCardExtractor
 from goose.cleaners import StandardDocumentCleaner
 from goose.outputformatters import StandardOutputFormatter
 
@@ -106,6 +107,9 @@ class Crawler(object):
         #microdata extractor
         self.microdata_extractor = self.get_microdata_extractor();
 
+        #hCard extractor
+        self.hcard_extractor = self.get_hcard_extractor();
+
         # html fetcher
         self.htmlfetcher = HtmlFetcher(self.config)
 
@@ -158,6 +162,9 @@ class Crawler(object):
         # title
         self.article.title = self.title_extractor.extract()
 
+        self.article.microdata = self.microdata_extractor.extract()
+        self.article.hcards = self.hcard_extractor.extract()
+
         # check for known node as content body
         # if we find one force the article.doc to be the found node
         # this will prevent the cleaner to remove unwanted text content
@@ -193,8 +200,6 @@ class Crawler(object):
 
             # clean_text
             self.article.cleaned_text = self.formatter.get_formatted_text()
-
-        self.article.microdata = self.microdata_extractor.extract()
 
         # cleanup tmp file
         self.relase_resources()
@@ -258,6 +263,9 @@ class Crawler(object):
 
     def get_microdata_extractor(self):
         return MicroDataExtractor(self.config, self.article)
+
+    def get_hcard_extractor(self):
+        return HCardExtractor(self.config, self.article)
 
     def get_formatter(self):
         return StandardOutputFormatter(self.config, self.article)

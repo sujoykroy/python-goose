@@ -20,7 +20,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from StringIO import StringIO
+
 import lxml.html
+from lxml.cssselect import CSSSelector
 from lxml.html import soupparser
 from lxml import etree
 from copy import deepcopy
@@ -83,7 +86,7 @@ class Parser(object):
             selector = '%s[re:test(@%s, "%s", "i")]' % (selector, attr, value)
         elif attr:
             selector = '%s[@%s]' % (selector, attr)
-            print(selector)
+
         elems = node.xpath(selector, namespaces={"re": NS})
         # remove the root node
         # if we have a selection tag
@@ -242,6 +245,26 @@ class Parser(object):
             e0.tail = None
         return self.nodeToString(e0)
 
+
+class ParserXML(Parser):
+    @classmethod
+    def fromstring(self, html):
+        html = encodeValue(html)
+        self.doc = etree.parse(StringIO(html), etree.HTMLParser(recover=True)).getroot()
+        print("self.doc", self.doc)
+        print(self.doc.xpath('//*[@class="vcard"]'))
+        return self.doc
+
+    @classmethod
+    def css_select(self, node, selector):
+        sel = CSSSelector(selector)
+        return node.xpath(sel.path)
+
+    @classmethod
+    def getAttribute(self, node, attr=None):
+        if attr:
+            return node.get(attr, None)
+        return attr
 
 class ParserSoup(Parser):
 
