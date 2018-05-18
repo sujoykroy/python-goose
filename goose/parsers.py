@@ -251,8 +251,6 @@ class ParserXML(Parser):
     def fromstring(self, html):
         html = encodeValue(html)
         self.doc = etree.parse(StringIO(html), etree.HTMLParser(recover=True)).getroot()
-        print("self.doc", self.doc)
-        print(self.doc.xpath('//*[@class="vcard"]'))
         return self.doc
 
     @classmethod
