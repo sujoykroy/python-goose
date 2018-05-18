@@ -108,7 +108,6 @@ class Configuration(object):
         self.file_handler = None
 
     def get_parser(self):
-        print("self.parser_class", self.parser_class)
         return AVAILABLE_PARSERS[self.parser_class]
 
     def get_additionaldata_extractor(self):
