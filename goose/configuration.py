@@ -107,6 +107,9 @@ class Configuration(object):
         #file handler
         self.file_handler = None
 
+        #html fetcher class
+        self.htmlfetcher_class = None
+
     def get_parser(self):
         return AVAILABLE_PARSERS[self.parser_class]
 

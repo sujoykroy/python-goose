@@ -111,7 +111,11 @@ class Crawler(object):
         self.hcard_extractor = self.get_hcard_extractor();
 
         # html fetcher
-        self.htmlfetcher = HtmlFetcher(self.config)
+        htmlfetcher_class = config.htmlfetcher_class
+        if not htmlfetcher_class:
+            htmlfetcher_class = HtmlFetcher
+
+        self.htmlfetcher = htmlfetcher_class(self.config)
 
         # TODO : log prefix
         self.logPrefix = "crawler:"
@@ -174,7 +178,6 @@ class Crawler(object):
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
-
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
 
