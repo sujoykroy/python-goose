@@ -28,6 +28,7 @@ from goose.extractors import BaseExtractor
 KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
+    {'attr': 'class', 'value': 'article-body'},
     {'tag': 'article'},
 ]
 
@@ -275,6 +276,17 @@ class ContentExtractor(BaseExtractor):
         new_score = current_score + add_to_count
         self.parser.setAttribute(node, "gravityNodes", str(new_score))
 
+    def get_node_count(self, node):
+        """\
+        get how many decent nodes are under a parent node
+        """
+        current_score = 0
+        count_string = self.parser.getAttribute(node, 'gravityNodes')
+        if count_string:
+            current_score = int(count_string)
+
+        return current_score
+
     def is_highlink_density(self, e):
         """\
         checks the density of links within a node,
@@ -342,10 +354,14 @@ class ContentExtractor(BaseExtractor):
     def is_nodescore_threshold_met(self, node, e):
         top_node_score = self.get_score(node)
         current_nodeScore = self.get_score(e)
-        thresholdScore = float(top_node_score * .08)
+        node_count = self.get_node_count(node)
+        if node_count == 0:
+            node_count = 1
+        thresholdScore = float(top_node_score * .08 / node_count)
 
         if (current_nodeScore < thresholdScore) and e.tag != 'td':
             return False
+
         return True
 
     def post_cleanup(self):
