@@ -172,19 +172,22 @@ class Crawler(object):
         # check for known node as content body
         # if we find one force the article.doc to be the found node
         # this will prevent the cleaner to remove unwanted text content
-        article_body = self.extractor.get_known_article_tags()
-        if article_body is not None:
-            self.article.doc = article_body
+        self.article_body = self.extractor.get_known_article_tags()
+        if self.article_body is not None:
+            self.article.doc = self.article_body
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
 
+        #if article_body was already found, use it as topnode
+        if self.article_body is not None:
+            self.article.top_node = self.article_body
+
         # if we have a top node
         # let's process it
         if self.article.top_node is not None:
-
             # article links
             self.article.links = self.links_extractor.extract()
 

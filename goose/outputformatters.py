@@ -69,11 +69,15 @@ class OutputFormatter(object):
     def convert_to_text(self):
         txts = []
         for node in list(self.get_top_node()):
-            txt = self.parser.getText(node)
-            if txt:
-                txt = HTMLParser().unescape(txt)
-                txt_lis = innerTrim(txt).split(r'\n')
-                txts.extend(txt_lis)
+            child_nodes = self.parser.getChildren(node)
+            if len(child_nodes) == 0:
+                child_nodes = [node]
+            for child_node in child_nodes:
+                txt = self.parser.getText(child_node)
+                if txt:
+                    txt = HTMLParser().unescape(txt)
+                    txt_lis = innerTrim(txt).split(r'\n')
+                    txts.extend(txt_lis)
         return '\n\n'.join(txts)
 
     def add_newline_to_br(self):
