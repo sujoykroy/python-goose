@@ -69,7 +69,7 @@ class OutputFormatter(object):
     def convert_to_text(self):
         txts = []
         for node in list(self.get_top_node()):
-            child_nodes = self.parser.getChildren(node)
+            child_nodes = self.parser.xpath_re(node, "descendant::p")
             if len(child_nodes) == 0:
                 child_nodes = [node]
             for child_node in child_nodes:

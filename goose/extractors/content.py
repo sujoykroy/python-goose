@@ -53,7 +53,18 @@ class ContentExtractor(BaseExtractor):
                             self.article.doc,
                             **item)
             if len(nodes):
-                return nodes[0]
+                #Since there is multiple tag, find the one with maximum children
+                if len(nodes) > 1:
+                    final_node = None
+                    max_children = 0
+                    for node in nodes:
+                        children_count = len(self.parser.getChildren(node))
+                        if children_count > max_children:
+                            max_children = children_count
+                            final_node = node
+                    return final_node
+                else:
+                    return nodes[0]
         return None
 
     def is_articlebody(self, node):
@@ -131,17 +142,36 @@ class ContentExtractor(BaseExtractor):
             i += 1
 
         top_node_score = 0
+        average_score = 0
         for e in parent_nodes:
             score = self.get_score(e)
-
             if score > top_node_score:
+                if top_node is not None:
+                    average_score = (average_score + score)*.5
+                else:
+                    average_score = score
                 top_node = e
                 top_node_score = score
 
             if top_node is None:
                 top_node = e
 
+        if top_node is not None and average_score != 0:
+            scoreByAvg =  self.get_score(top_node)/average_score
+            self.parser.setAttribute(top_node, "scoreByAvg", str(scoreByAvg))
         return top_node
+
+    def get_score_by_avg(self, node):
+        """\
+        returns the gravityScore divided by average score of the relevant tags
+        calculate during calculate_best_node
+        """
+        score_string = self.parser.getAttribute(node, 'scoreByAvg')
+        if score_string:
+            score = float(score_string)
+        else:
+            score = 0
+        return score
 
     def is_boostable(self, node):
         """\
