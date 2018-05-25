@@ -64,7 +64,8 @@ class Goose(object):
         try:
             crawler = Crawler(self.config)
             article = crawler.crawl(crawl_candiate)
-        except (UnicodeDecodeError, ValueError):
+        except (UnicodeDecodeError, ValueError) as e:
+            print(e)
             self.config.parser_class = parsers[0]
             return self.crawl(crawl_candiate)
         return article

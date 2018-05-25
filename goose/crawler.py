@@ -181,11 +181,13 @@ class Crawler(object):
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
 
+        #print("doc", self.article.doc , self.article.doc .attrib)
+        #print("top_node", self.article.top_node , self.article.top_node .attrib)
         #if article_body was already found, use it as topnode
-        if self.article.top_node is not None and \
-            self.article_body is not None and \
-                self.extractor.get_score_by_avg(self.article.top_node) < 1.5:
-            self.article.top_node = self.article_body
+        #if self.article.top_node is not None and \
+        #    self.article_body is not None and \
+        #        self.extractor.get_score_by_avg(self.article.top_node) < 1.5:
+        #    self.article.top_node = self.article_body
 
         # if we have a top node
         # let's process it

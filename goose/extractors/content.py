@@ -53,14 +53,14 @@ class ContentExtractor(BaseExtractor):
                             self.article.doc,
                             **item)
             if len(nodes):
-                #Since there is multiple tag, find the one with maximum children
+                #Since there is multiple tag, find the one with maximum text
                 if len(nodes) > 1:
                     final_node = None
-                    max_children = 0
+                    max_text_size = 0
                     for node in nodes:
-                        children_count = len(self.parser.getChildren(node))
-                        if children_count > max_children:
-                            max_children = children_count
+                        text_size = len(self.parser.getText(node))
+                        if text_size > max_text_size:
+                            max_text_size = text_size
                             final_node = node
                     return final_node
                 else:
@@ -371,6 +371,8 @@ class ContentExtractor(BaseExtractor):
 
     def is_table_and_no_para_exist(self, e):
         subParagraphs = self.parser.getElementsByTag(e, tag='p')
+        if len(subParagraphs) == 1:
+            return False
         for p in subParagraphs:
             txt = self.parser.getText(p)
             if len(txt) < 25:
@@ -388,6 +390,7 @@ class ContentExtractor(BaseExtractor):
         if node_count == 0:
             node_count = 1
         thresholdScore = float(top_node_score * .08 / node_count)
+        #thresholdScore = float(top_node_score * .08)
 
         if (current_nodeScore < thresholdScore) and e.tag != 'td':
             return False

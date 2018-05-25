@@ -69,6 +69,12 @@ class OutputFormatter(object):
     def convert_to_text(self):
         txts = []
         for node in list(self.get_top_node()):
+            txt = self.parser.getText(node)
+            if txt:
+                txt = HTMLParser().unescape(txt)
+                txt_lis = innerTrim(txt).split(r'\n')
+                txts.extend(txt_lis)
+            """
             child_nodes = self.parser.xpath_re(node, "descendant::p")
             if len(child_nodes) == 0:
                 child_nodes = [node]
@@ -78,6 +84,7 @@ class OutputFormatter(object):
                     txt = HTMLParser().unescape(txt)
                     txt_lis = innerTrim(txt).split(r'\n')
                     txts.extend(txt_lis)
+            """
         return '\n\n'.join(txts)
 
     def add_newline_to_br(self):
@@ -90,6 +97,7 @@ class OutputFormatter(object):
         should be considered text into text
         """
         self.parser.stripTags(self.get_top_node(), 'a')
+        self.parser.stripTags(self.get_top_node(), 'u')
 
     def remove_negativescores_nodes(self):
         """\

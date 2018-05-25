@@ -32,7 +32,7 @@ from goose.image import LocallyStoredImage
 class ImageUtils(object):
 
     @classmethod
-    def get_image_dimensions(self, identify_program, path, config):
+    def get_image_dimensions(self, identify_program, path, config=None):
         image_details = ImageDetails()
         if config and config.file_handler:
             image_info = config.file_handler.get_image_info(path)

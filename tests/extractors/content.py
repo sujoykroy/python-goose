@@ -222,6 +222,16 @@ class TestExtractions(TestExtractionBase):
         fields = ['cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_project_syndicate(self):
+        article = self.getArticle()
+        fields = ['cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
+    def test_weforum(self):
+        article = self.getArticle()
+        fields = ['cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
 
 class TestArticleTopNode(TestExtractionBase):
 
