@@ -58,6 +58,11 @@ class Parser(object):
         return self.doc
 
     @classmethod
+    def stringToNode(self, html):
+        html = encodeValue(html)
+        return lxml.html.fromstring(html)
+
+    @classmethod
     def nodeToString(self, node):
         return etree.tostring(node)
 

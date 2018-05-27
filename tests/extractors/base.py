@@ -93,6 +93,7 @@ class BaseMockTests(unittest.TestCase):
     Base Mock test case
     """
     callback = MockResponse
+    response_file_map = None
 
     def setUp(self):
         # patch DNS
@@ -113,8 +114,12 @@ class BaseMockTests(unittest.TestCase):
 
 
 class MockResponseExtractors(MockResponse):
+    response_file_map = None
+
     def content(self, req):
         test, suite, module, cls, func = self.cls.id().split('.')
+        if self.response_file_map:
+            func = self.response_file_map(req.get_full_url(), func)
         path = os.path.join(
                 os.path.dirname(CURRENT_PATH),
                 "data",
@@ -178,6 +183,8 @@ class TestExtractionBase(BaseMockTests):
         # cleaned_text length
         msg = u"Article text was not as long as expected beginning!"
 
+        #print("expected_value", expected_value)
+        #print("result_value", result_value)
         self.assertTrue(len(expected_value) <= len(result_value), msg=msg)
 
         # clean_text value

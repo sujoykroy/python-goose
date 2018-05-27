@@ -68,6 +68,7 @@ class DocumentCleaner(object):
 
     def clean(self):
         doc_to_clean = self.article.doc
+        doc_to_clean = self.normalize_nested_singular_ptags(doc_to_clean)
         doc_to_clean = self.clean_body_classes(doc_to_clean)
         doc_to_clean = self.clean_article_tags(doc_to_clean)
         doc_to_clean = self.clean_em_tags(doc_to_clean)
@@ -256,6 +257,16 @@ class DocumentCleaner(object):
 
         return doc
 
+    def normalize_nested_singular_ptags(self, doc):
+        ptags = self.parser.xpath_re(doc, "//p")
+        for tag in ptags:
+            parent = self.parser.getParent(tag)
+            while parent is not None and len(self.parser.getChildren(parent)) == 1:
+                self.parser.stripTags(tag, 'p')
+                #self.parser.replaceTag(parent, 'p')
+                tag = parent
+                parent = self.parser.getParent(tag)
+        return doc
 
 class StandardDocumentCleaner(DocumentCleaner):
     pass

@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import site_plugins
 
 class BaseExtractor(object):
 
@@ -36,3 +37,11 @@ class BaseExtractor(object):
 
         # stopwords class
         self.stopwords_class = config.stopwords_class
+
+        self.more_article_doc = None
+
+    def extract_more(self, htmlfetcher):
+        extract_more_func = site_plugins.get_more_extractor(self.article.domain)
+        if not extract_more_func:
+            return
+        extract_more_func(self, htmlfetcher)

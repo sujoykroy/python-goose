@@ -20,14 +20,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from base import TestExtractionBase
+from base import TestExtractionBase, MockResponseExtractors
 
 from goose.text import StopWordsChinese
 from goose.text import StopWordsArabic
 from goose.text import StopWordsKorean
 
+from goose.extractors import site_plugins
+
+class MockContentResponseExtractors(MockResponseExtractors):
+    def response_file_map(self, url, func):
+        if url.startswith(site_plugins.latimes.API_BASE_URL):
+            return func + "_api_json"
+        return func
 
 class TestExtractions(TestExtractionBase):
+    callback = MockContentResponseExtractors
 
     def test_allnewlyrics1(self):
         article = self.getArticle()
@@ -228,6 +236,13 @@ class TestExtractions(TestExtractionBase):
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_weforum(self):
+        article = self.getArticle()
+        fields = ['cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
+    def test_latimes(self):
+        self.response_file_map
+
         article = self.getArticle()
         fields = ['cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)

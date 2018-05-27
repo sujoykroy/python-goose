@@ -28,6 +28,7 @@ class HtmlFetcher(object):
     def __init__(self, config):
         self.config = config
         # set header
+        #self.config.browser_user_agent = "'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'"
         self.headers = {'User-agent': self.config.browser_user_agent}
 
     def get_url(self):
