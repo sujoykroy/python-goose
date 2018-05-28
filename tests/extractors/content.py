@@ -247,6 +247,13 @@ class TestExtractions(TestExtractionBase):
         fields = ['cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_latimes_subsc(self):
+        self.response_file_map
+
+        article = self.getArticle()
+        fields = ['cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
 
 class TestArticleTopNode(TestExtractionBase):
 

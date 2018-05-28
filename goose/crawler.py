@@ -190,7 +190,8 @@ class Crawler(object):
         #if article_body was already found, use it as topnode
         if self.article.top_node is not None and \
             self.article_body is not None and \
-                self.extractor.get_score_by_avg(self.article.top_node) < 1:
+                (self.extractor.get_score_by_avg(self.article.top_node) < 1 or \
+                 self.extractor.get_node_count(self.article.top_node) == 1):
             self.article.top_node = self.article_body
 
         # if we have a top node

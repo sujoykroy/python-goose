@@ -184,7 +184,7 @@ class TestExtractionBase(BaseMockTests):
         msg = u"Article text was not as long as expected beginning!"
 
         #print("expected_value", expected_value)
-        #print("result_value", result_value)
+        #print("result_value  ", result_value)
         self.assertTrue(len(expected_value) <= len(result_value), msg=msg)
 
         # clean_text value
