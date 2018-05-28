@@ -1,6 +1,8 @@
 from . import latimes
 
 def get_more_extractor(domain):
+    if domain is None:
+        return None
     module = None
     if "latimes.com" in domain:
         module = latimes
