@@ -29,7 +29,7 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
-    {'tag': 'article'},
+    {'tag': 'article'}
 ]
 
 
@@ -54,6 +54,7 @@ class ContentExtractor(BaseExtractor):
                             **item)
             if len(nodes):
                 #Since there is multiple tag, find the one with maximum text
+                """
                 if len(nodes) > 1:
                     final_node = None
                     max_text_size = 0
@@ -65,6 +66,8 @@ class ContentExtractor(BaseExtractor):
                     return final_node
                 else:
                     return nodes[0]
+                """
+                return nodes[0]
         return None
 
     def is_articlebody(self, node):
