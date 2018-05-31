@@ -262,8 +262,8 @@ class DocumentCleaner(object):
         for tag in ptags:
             parent = self.parser.getParent(tag)
             while parent is not None and len(self.parser.getChildren(parent)) == 1:
-                self.parser.stripTags(tag, 'p')
-                #self.parser.replaceTag(parent, 'p')
+                self.parser.stripTags(parent, self.parser.getTag(tag))
+                self.parser.replaceTag(parent, 'p')
                 tag = parent
                 parent = self.parser.getParent(tag)
         return doc

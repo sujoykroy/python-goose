@@ -176,10 +176,11 @@ class Crawler(object):
         if self.article_body is not None:
             self.article.doc = self.article_body
 
-        self.extractor.extract_more(self.htmlfetcher)
+        #self.extractor.extract_more(self.htmlfetcher)
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
+
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
 
@@ -188,11 +189,11 @@ class Crawler(object):
         #    print("top_node", self.article.top_node , self.article.top_node .attrib)
 
         #if article_body was already found, use it as topnode
-        if self.article.top_node is not None and \
-            self.article_body is not None and \
-                (self.extractor.get_score_by_avg(self.article.top_node) < 1 or \
-                 self.extractor.get_node_count(self.article.top_node) == 1):
-            self.article.top_node = self.article_body
+        #if self.article.top_node is not None and \
+        #    self.article_body is not None and \
+        #        (self.extractor.get_score_by_avg(self.article.top_node) < 1 or \
+        #         self.extractor.get_node_count(self.article.top_node) == 1):
+        #    self.article.top_node = self.article_body
 
         # if we have a top node
         # let's process it
@@ -210,9 +211,12 @@ class Crawler(object):
             if self.config.enable_image_fetching:
                 self.get_image()
 
+            #f = open("/home/sujoy/Temporary/goose_text.html", "w")
+            #f.write(self.parser.outerHtml(self.article.top_node))
+
             # post cleanup
             self.article.top_node = self.extractor.post_cleanup()
-            #print(self.parser.getText(self.article.top_node))
+
             # clean_text
             #print(self.parser.nodeToString(self.article.top_node ))
             self.article.cleaned_text = self.formatter.get_formatted_text()
