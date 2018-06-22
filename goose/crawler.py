@@ -173,19 +173,24 @@ class Crawler(object):
         # if we find one force the article.doc to be the found node
         # this will prevent the cleaner to remove unwanted text content
         self.article_body = self.extractor.get_known_article_tags()
+
         if self.article_body is not None:
+            #print('self.article_body', self.article_body, self.article_body.attrib, self.parser.getText(self.article_body))
             self.article.doc = self.article_body
+
+        #if self.parser.getTag(self.article.doc) == "html":
+        #    print("doc", self.article.doc , self.article.doc.attrib)
 
         #self.extractor.extract_more(self.htmlfetcher)
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
-
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
-
+        if self.article.top_node is None:
+            self.article.top_node = self.article.doc
         #print("doc", self.article.doc , self.article.doc .attrib)
-        #if self.article.top_node:
+        #if self.article.top_node is not None:
         #    print("top_node", self.article.top_node , self.article.top_node .attrib)
 
         #if article_body was already found, use it as topnode
@@ -218,7 +223,7 @@ class Crawler(object):
             self.article.top_node = self.extractor.post_cleanup()
 
             # clean_text
-            #print(self.parser.nodeToString(self.article.top_node ))
+            #print("nodetostring", self.parser.getText(self.article.top_node ))
             self.article.cleaned_text = self.formatter.get_formatted_text()
 
         # cleanup tmp file

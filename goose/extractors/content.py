@@ -23,7 +23,7 @@ limitations under the License.
 from copy import deepcopy
 
 from goose.extractors import BaseExtractor
-
+from operator import itemgetter
 
 KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
@@ -32,6 +32,7 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
     {'tag': 'article'}
 ]
 
+BAD_ARTICLE_ATTRIBS = set(('alert',))
 
 class ContentExtractor(BaseExtractor):
 
@@ -67,7 +68,26 @@ class ContentExtractor(BaseExtractor):
                 else:
                     return nodes[0]
                 """
-                return nodes[0]
+
+                node = nodes[0]
+                #node_class = self.parser.getAttribute(node, 'class')
+                #if node_class:
+                #    class_list = node_class.split(" ")
+                #    if set(class_list) & BAD_ARTICLE_ATTRIBS:
+                #       continue
+                return node
+
+        """
+        divs = []
+        for div in self.parser.xpath_re(self.article.doc, "descendant-or-self::*"):
+            p_count = len(self.parser.xpath_re(div, "p"))
+            print(div, div.attrib)
+            if p_count > 0:
+                divs.append((div, p_count))
+        if divs:
+            divs.sort(key=itemgetter(1))
+            return divs[0]
+        """
         return None
 
     def is_articlebody(self, node):

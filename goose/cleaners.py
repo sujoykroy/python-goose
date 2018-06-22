@@ -48,7 +48,7 @@ class DocumentCleaner(object):
         "|communitypromo|runaroundLeft|subscribe|vcard|articleheadings"
         "|date|^print$|popup|author-dropdown|tools|socialtools|byline"
         "|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text"
-        "|legende|ajoutVideo|timestamp|js_replies|image-caption"
+        "|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts"
         )
         self.regexp_namespace = "http://exslt.org/regular-expressions"
         self.nauthy_ids_re = "descendant::*[re:test(@id, '%s', 'i')]" % self.remove_nodes_re
@@ -261,7 +261,7 @@ class DocumentCleaner(object):
         ptags = self.parser.xpath_re(doc, "//p")
         for tag in ptags:
             parent = self.parser.getParent(tag)
-            while parent is not None and len(self.parser.getChildren(parent)) == 1:
+            while parent != doc and parent is not None and len(self.parser.getChildren(parent)) == 1:
                 self.parser.stripTags(parent, self.parser.getTag(tag))
                 self.parser.replaceTag(parent, 'p')
                 tag = parent
