@@ -79,6 +79,7 @@ class Article(object):
 
         # holds links found in the main article
         self.links = []
+        self.html_links = []
 
         # hold author names
         self.authors = []
@@ -115,6 +116,15 @@ class Article(object):
 
         # A property bucket for consumers of goose to store custom data extractions.
         self.additional_data = {}
+
+        self.sub_articles = []
+
+    def get_relative_html_links(self):
+        rel_links = []
+        for link in self.html_links:
+            if link.url == "/":
+                rel_links.append(link)
+        return rel_links
 
     @property
     def infos(self):

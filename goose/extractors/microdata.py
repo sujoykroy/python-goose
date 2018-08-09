@@ -33,9 +33,11 @@ class MicroDataExtractor(BaseExtractor):
                     prop = self.parser.getAttribute(child, 'datetime')
                 elif tag_name == "meta":
                     prop = self.parser.getAttribute(child, 'content')
-                elif tag_name == "url":
+                elif "url" in prop_name or tag_name in ("url", "img") :
                     prop = self.parser.getAttribute(child, 'href')
-                    if prop is None:
+                    if not prop:
+                        prop = self.parser.getAttribute(child, 'src')
+                    if not prop:
                         prop = self.parser.getAttribute(child, 'content')
                 else:
                     prop = self.parser.getText(child)

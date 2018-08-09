@@ -25,6 +25,7 @@ from base import TestExtractionBase, MockResponseExtractors
 from goose.text import StopWordsChinese
 from goose.text import StopWordsArabic
 from goose.text import StopWordsKorean
+from goose.crawler import Crawler, CrawlCandidate
 
 from goose.extractors import site_plugins
 
@@ -325,3 +326,57 @@ class TestExtractionsRaw(TestExtractions):
     def extract(self, instance):
         article = instance.extract(raw_html=self.getRawHtml())
         return article
+
+
+class TestSubArticleExtraction(TestExtractionBase):
+    def test_raw_article_content(self):
+        config = self.getConfig()
+
+        raw_html = """
+            <article class="story theme-summary  " itemscope="" itemtype="http://schema.org/NewsArticle">
+                <div class="story-body">
+                    <a class="story-link" data-rref="" href="https://www.nytimes.com/2018/08/07/us/politics/rosie-odonnell-broadway-white-house-protest.html">
+                        <div class="story-meta">
+                                            <h2 class="headline" itemprop="headline">
+                                Rosie O'Donnell and Chorus of Broadway Stars Perform Musical Protest at White House                </h2>
+                            <p class="summary" itemprop="description">On the 22nd night of a series of protests, cast members from &#8220;Wicked,&#8221; &#8220;Hamilton&#8221; and other shows sang songs meant to evoke a political edge or offer a tinge of hope for the hundreds of demonstrators.</p>
+                                                <p class="byline" itemprop="author">By ALEXANDRA YOON-HENDRICKS</p>
+                                        </div><!-- close story-meta -->
+                                        <div class="wide-thumb">
+                                <img role="presentation" src="https://static01.nyt.com/images/2018/08/07/us/politics/-08dc-occupy-3/merlin_142080273_0d5bed71-f59c-438c-8157-4166a5ee6dde-mediumThreeByTwo210.jpg" alt="" itemprop="thumbnailUrl"/>
+                                                                    </div><!-- close wide-thumb -->
+                                </a>
+                </div><!-- close story-body -->
+                <footer class="story-footer">
+                    <time class="dateline" datetime="2018-08-07" itemprop="dateModified" content="2018-08-07">Aug. 7, 2018</time>
+                </footer>
+            </article>
+        """
+        crawler = Crawler(config)
+        article = crawler.crawl(
+            CrawlCandidate(config, None, raw_html), crawl_sub=False)
+        self.assertEqual(
+            "Rosie O'Donnell and Chorus of Broadway Stars Perform Musical"[0:50],
+            article.title[0:50])
+        self.assertEqual(
+            "https://www.nytimes.com/2018/08/07/us/politics/rosie-odonnell-broadway-white-house-protest.html", article.links[0])
+        self.assertEqual(
+            article.microdata.get("newsarticle")[0].get("thumbnailurl"),
+            "https://static01.nyt.com/images/2018/08/07/us/politics/-08dc-occupy-3/merlin_142080273_0d5bed71-f59c-438c-8157-4166a5ee6dde-mediumThreeByTwo210.jpg")
+
+
+    def test_sub_articles_2(self):
+        article = self.getArticle()
+        self.assertEqual(43, len(article.sub_articles))
+        self.assertEqual(
+            article.sub_articles[0].crawled_article.title[0:20],
+            "Boris Johnson Speaks, and His Many Critics"[0:20])
+        self.assertEqual(
+            article.sub_articles[40].crawled_article.title[0:20],
+            "Top Trump Campaign Aides Are Portrayed"[0:20])
+
+
+    def test_sub_articles_1(self):
+        article = self.getArticle()
+        self.assertTrue(len(article.html_links) > 0)
+        self.assertTrue(len(article.sub_articles) == 0)

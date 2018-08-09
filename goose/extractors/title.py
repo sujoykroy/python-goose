@@ -98,6 +98,11 @@ class TitleExtractor(BaseExtractor):
             title = self.parser.getText(title_element[0])
             return self.clean_title(title)
 
+        newsarticles = self.article.microdata.get('newsarticle')
+        if newsarticles:
+            title = newsarticles[0].get('headline', '')
+            return self.clean_title(title)
+
         return title
 
     def extract(self):

@@ -25,11 +25,13 @@ from copy import deepcopy
 from goose.extractors import BaseExtractor
 from operator import itemgetter
 
+from goose.sub_article import SubArticle
+
 KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
-    {'tag': 'article'}
+    {'tag': 'article'},
 ]
 
 BAD_ARTICLE_ATTRIBS = set(('alert',))
@@ -54,28 +56,16 @@ class ContentExtractor(BaseExtractor):
                             self.article.doc,
                             **item)
             if len(nodes):
-                #Since there is multiple tag, find the one with maximum text
-                """
-                if len(nodes) > 1:
-                    final_node = None
-                    max_text_size = 0
-                    for node in nodes:
-                        text_size = len(self.parser.getText(node))
-                        if text_size > max_text_size:
-                            max_text_size = text_size
-                            final_node = node
-                    return final_node
-                else:
-                    return nodes[0]
-                """
-
-                node = nodes[0]
-                #node_class = self.parser.getAttribute(node, 'class')
-                #if node_class:
-                #    class_list = node_class.split(" ")
-                #    if set(class_list) & BAD_ARTICLE_ATTRIBS:
-                #       continue
-                return node
+                for node in nodes:
+                    self.article.sub_articles.append(
+                        SubArticle(node=node, parser=self.parser))
+                    #node_class = self.parser.getAttribute(node, 'class')
+                    #if node_class:
+                    #    class_list = node_class.split(" ")
+                    #    if set(class_list) & BAD_ARTICLE_ATTRIBS:
+                    #       continue
+        if self.article.sub_articles:
+            return self.article.sub_articles[0].node
 
         """
         divs = []

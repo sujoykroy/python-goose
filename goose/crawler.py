@@ -24,6 +24,7 @@ import os
 import glob
 from copy import deepcopy
 from goose.article import Article
+from goose.sub_article import SubArticle
 from goose.utils import URLHelper, RawHelper
 from goose.extractors.content import StandardContentExtractor
 from goose.extractors.videos import VideoExtractor
@@ -43,16 +44,18 @@ from goose.outputformatters import StandardOutputFormatter
 
 from goose.network import HtmlFetcher
 
+import goose.text
+
 
 class CrawlCandidate(object):
 
-    def __init__(self, config, url, raw_html):
+    def __init__(self, config, url, raw_html, doc=None):
         self.config = config
         # parser
         self.parser = self.config.get_parser()
         self.url = url
         self.raw_html = raw_html
-
+        self.doc = doc
 
 class Crawler(object):
 
@@ -120,26 +123,32 @@ class Crawler(object):
         # TODO : log prefix
         self.logPrefix = "crawler:"
 
-    def crawl(self, crawl_candidate):
-
+    def crawl(self, crawl_candidate, crawl_sub=True):
         # parser candidate
         parse_candidate = self.get_parse_candidate(crawl_candidate)
 
-        # raw html
-        raw_html = self.get_html(crawl_candidate, parse_candidate)
+        if crawl_candidate.doc is None:
+            # raw html
+            raw_html = self.get_html(crawl_candidate, parse_candidate)
 
-        if raw_html is None:
-            return self.article
+            if raw_html is None:
+                return self.article
 
-        # create document
-        doc = self.get_document(raw_html)
+            # create document
+            doc = self.get_document(raw_html)
+        else:
+            doc = crawl_candidate.doc
+            raw_html = None
 
         # article
         self.article.final_url = parse_candidate.url
+        self.article.site_domain =  goose.text.get_site_domain(parse_candidate.url)
         self.article.link_hash = parse_candidate.link_hash
         self.article.raw_html = raw_html
         self.article.doc = doc
         self.article.raw_doc = deepcopy(doc)
+
+        self.article.microdata = self.microdata_extractor.extract()
 
         # open graph
         self.article.opengraph = self.opengraph_extractor.extract()
@@ -166,32 +175,28 @@ class Crawler(object):
         # title
         self.article.title = self.title_extractor.extract()
 
-        self.article.microdata = self.microdata_extractor.extract()
         self.article.hcards = self.hcard_extractor.extract()
 
         # check for known node as content body
         # if we find one force the article.doc to be the found node
         # this will prevent the cleaner to remove unwanted text content
-        self.article_body = self.extractor.get_known_article_tags()
+        if crawl_sub:
+            self.article_body = self.extractor.get_known_article_tags()
+        else:
+            self.article_body = doc
 
         if self.article_body is not None:
-            #print('self.article_body', self.article_body, self.article_body.attrib, self.parser.getText(self.article_body))
             self.article.doc = self.article_body
-
-        #if self.parser.getTag(self.article.doc) == "html":
-        #    print("doc", self.article.doc , self.article.doc.attrib)
 
         #self.extractor.extract_more(self.htmlfetcher)
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
+
         # big stuff
         self.article.top_node = self.extractor.calculate_best_node()
         if self.article.top_node is None:
             self.article.top_node = self.article.doc
-        #print("doc", self.article.doc , self.article.doc .attrib)
-        #if self.article.top_node is not None:
-        #    print("top_node", self.article.top_node , self.article.top_node .attrib)
 
         #if article_body was already found, use it as topnode
         #if self.article.top_node is not None and \
@@ -205,6 +210,7 @@ class Crawler(object):
         if self.article.top_node is not None:
             # article links
             self.article.links = self.links_extractor.extract()
+            self.article.html_links = self.links_extractor.extract_html_links()
 
             # tweets
             self.article.tweets = self.tweets_extractor.extract()
@@ -216,23 +222,34 @@ class Crawler(object):
             if self.config.enable_image_fetching:
                 self.get_image()
 
-            #f = open("/home/sujoy/Temporary/goose_text.html", "w")
-            #f.write(self.parser.outerHtml(self.article.top_node))
-
             # post cleanup
-            self.article.top_node = self.extractor.post_cleanup()
+            if crawl_sub:
+                self.article.top_node = self.extractor.post_cleanup()
 
             # clean_text
-            #print("nodetostring", self.parser.getText(self.article.top_node ))
-            self.article.cleaned_text = self.formatter.get_formatted_text()
+            self.article.cleaned_text = self.formatter.get_formatted_text(
+                remove_fewwords=crawl_sub)
 
         # cleanup tmp file
         self.release_resources()
+
+        if crawl_sub and len(self.article.sub_articles) > 1:
+            for i in range(len(self.article.sub_articles)):
+                sub_article = self.article.sub_articles[i]
+                crawler = Crawler(self.config)
+                crawled_article = crawler.crawl(
+                    CrawlCandidate(
+                        self.config, None, raw_html=sub_article.outer_html),
+                    crawl_sub=False
+                )
+                sub_article.crawled_article = crawled_article
 
         # return the article
         return self.article
 
     def get_parse_candidate(self, crawl_candidate):
+        if crawl_candidate.doc is not None:
+            return SubArticle.get_parsing_candidate(crawl_candidate.doc)
         if crawl_candidate.raw_html:
             return RawHelper.get_parsing_candidate(crawl_candidate.url, crawl_candidate.raw_html)
         return URLHelper.get_parsing_candidate(crawl_candidate.url)
