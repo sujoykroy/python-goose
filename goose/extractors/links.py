@@ -24,10 +24,18 @@ import re
 from goose.extractors import BaseExtractor
 import goose.text
 
-class LinkItem(object):
+class LinkItem(dict):
     def __init__(self, url, text):
-        self.url = url
-        self.text = text
+        self["url"] = url
+        self["text"] = text
+
+    @property
+    def url(self):
+        return self["url"]
+
+    @property
+    def text(self):
+        return self["text"]
 
     def __repr__(self):
         return "(url={0}, text={1})".format(self.url, self.text.encode("utf-8"))
@@ -57,10 +65,13 @@ class LinksExtractor(BaseExtractor):
             if self.BAD_HTML_LINK_NAME.search(attr):
                 continue
             if attr[0] == "/":
-                attr = self.article.site_domain + attr
+                attr = self.article.site_domain + attr[1:]
             else:
                 link_site_domain = goose.text.get_site_domain(attr)
                 if link_site_domain != self.article.site_domain:
+                    continue
+                last_seg = attr.split("/")[-1]
+                if not last_seg or last_seg[0] == "#":
                     continue
 
             links.append(LinkItem(attr, text))
