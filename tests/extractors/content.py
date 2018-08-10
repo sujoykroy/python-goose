@@ -242,17 +242,22 @@ class TestExtractions(TestExtractionBase):
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_latimes(self):
-        self.response_file_map
+        #self.response_file_map
 
         article = self.getArticle()
         fields = ['cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_latimes_subsc(self):
-        self.response_file_map
+        #self.response_file_map
 
         article = self.getArticle()
         fields = ['cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
+    def test_miami_herald(self):
+        article = self.getArticle()
+        fields = ['cleaned_text', 'publish_date', "authors"]
         self.runArticleAssertions(article=article, fields=fields)
 
 

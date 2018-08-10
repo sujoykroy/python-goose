@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from goose.utils import ParsingCandidate
 
-class SubArticle(dict):
+class SubArticle(object):
     def __init__(self, node, parser):
         self.parser = parser
         self.node = node
