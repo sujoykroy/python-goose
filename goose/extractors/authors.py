@@ -21,10 +21,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import re
 from goose.extractors import BaseExtractor
 
+KNOWN_AUTHOR_TAGS = [
+    {'attribute': 'class', 'value': 'ng_byline_name', 'content': None}
+]
 
 class AuthorsExtractor(BaseExtractor):
+    AUTHOR_REPLACER = re.compile("^by\s+", flags=re.IGNORECASE)
+    AUTHOR_SPLITTER = re.compile(r"\band\b", flags=re.IGNORECASE)
 
     def extract(self):
         authors = []
@@ -43,4 +49,25 @@ class AuthorsExtractor(BaseExtractor):
                 name = self.parser.getText(name_nodes[0])
                 authors.append(name)
 
-        return list(set(authors))
+        for known_tag in KNOWN_AUTHOR_TAGS:
+            tags = self.parser.getElementsByTag(
+                            self.article.doc,
+                            attr=known_tag['attribute'],
+                            value=known_tag['value'])
+            if tags:
+                if not known_tag['content']:
+                    author = self.parser.getText(tags[0])
+                else:
+                    author = self.parser.getAttribute(
+                        tags[0],
+                        known_tag['content']
+                    )
+                authors.append(author)
+        authors = list(set(authors))
+        clean_authors = []
+        for full_author in authors:
+            for author in self.AUTHOR_SPLITTER.split(full_author):
+                author = self.AUTHOR_REPLACER.sub("", author).strip()
+                clean_authors.append(author)
+
+        return clean_authors
