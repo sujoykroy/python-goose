@@ -23,4 +23,6 @@ class HCardExtractor(BaseExtractor):
                         vcard[node_type] = text
             if vcard.keys():
                 vcards.append(vcard)
+            else:
+                vcards.append({"n": self.parser.getText(vcard_node)})
         return vcards
