@@ -103,6 +103,23 @@ class TitleExtractor(BaseExtractor):
             title = newsarticles[0].get('headline', '')
             return self.clean_title(title)
 
+        #get text of item with class=headline
+        class_headline = self.parser.getElementsByTag(
+                            self.article.doc,
+                            attr="class",
+                            value="headline")
+        if class_headline is not None and len(class_headline) > 0:
+            title = self.parser.getText(class_headline[0])
+            return self.clean_title(title)
+
+        # try to fetch the header link text
+        header_link = self.parser.xpath_re(
+                            self.article.doc,
+                            "//header/*[not(self::p)]/descendant::a")
+        if header_link:
+            title = self.parser.getText(header_link[0])
+            return self.clean_title(title)
+
         return title
 
     def extract(self):
