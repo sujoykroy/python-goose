@@ -329,7 +329,7 @@ class TestExtractionsRaw(TestExtractions):
 
 
 class TestSubArticleExtraction(TestExtractionBase):
-    def test_raw_article_content(self):
+    def test_raw_article_content_1(self):
         config = self.getConfig()
 
         raw_html = """
@@ -364,6 +364,117 @@ class TestSubArticleExtraction(TestExtractionBase):
             article.microdata.get("newsarticle")[0].get("thumbnailurl"),
             "https://static01.nyt.com/images/2018/08/07/us/politics/-08dc-occupy-3/merlin_142080273_0d5bed71-f59c-438c-8157-4166a5ee6dde-mediumThreeByTwo210.jpg")
 
+    def test_raw_article_content_2(self):
+        config = self.getConfig()
+        config.enable_image_fetching = True
+        raw_html = """
+        <article class="story-frag format-m">
+            <figure class="thumb">
+                    <div class="fig-graphic ">
+                        <a href="https://www.politico.com/story/2018/08/10/manhattan-madam-mueller-trump-stone-771182" target="_top"><img data-lazy-img="https://static.politico.com/dims4/default/9bbeb3b/2147483647/resize/403x%3E/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2Fe9%2F11%2Fba5f49dd4d5c840708c71ad6b403%2F180809-kristin-davis-ap-1160.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt=" Kristin Davis, aka the Manhattan Madam, is pictured. | AP Photo" data-size="promo_medium"></a></div>
+                </figure>
+            <div class="summary">
+                <header>
+                    <p class="category">
+                                <a href="https://www.politico.com/tag/mueller-investigation" target="_blank">mueller investigation</a></p>
+                        <h3>
+                        <a href="https://www.politico.com/story/2018/08/10/manhattan-madam-mueller-trump-stone-771182" target="_top">Mystery surrounds former sex-ring operator&#039;s Mueller probe role</a></h3>
+                </header>
+                <footer class="meta">
+                <div itemprop="author" itemscope itemtype="https://schema.org/Person">
+                            <meta itemprop="name" content="Kyle Cheney"/>
+                            <meta itemprop="email" content="kcheney@politico.com"/>
+                        </div>
+                    <p class="byline">
+                                By <a href="https://www.politico.com/staff/kyle-cheney" rel="author" class="url fn" target="_top">KYLE CHENEY</a></p>
+                        <p class="timestamp"><time itemprop="datePublished" datetime='2018-08-10 05:05:04'>08/10/2018 05:05 AM EDT</time></p>
+                                </footer><div class="social">
+                    <ul class="social">
+                        </ul>
+                </div>
+            </div>
+        </article>
+        """
+        crawler = Crawler(config)
+        article = crawler.crawl(
+            CrawlCandidate(config, None, raw_html), crawl_sub=False)
+        self.assertEqual(
+            "Mystery surrounds former sex-ring operato"[0:30],
+            article.title[0:30])
+        self.assertEqual(
+            "https://www.politico.com/story/2018/08/10/manhattan-madam-mueller-trump-stone-771182", article.links[0])
+        self.assertEqual(
+            "https://static.politico.com/dims4/default/9bbeb3b/2147483647/resize/403x%3E/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2Fe9%2F11%2Fba5f49dd4d5c840708c71ad6b403%2F180809-kristin-davis-ap-1160.jpg", article.top_image.get_src())
+
+    def test_raw_article_content_3(self):
+        config = self.getConfig()
+        config.enable_image_fetching = True
+        config.enable_image_download = False
+        raw_html = """
+        <article class="story-frag format-xs">
+            <figure class="thumb">
+                <div class="fig-graphic">
+                    <a href="https://www.politico.com/magazine/story/2018/08/08/alex-jones-banned-lowry-219343" target="_top" data-tracking="mpos=right-rail&mid=LeadAndThumbnailModule&lindex=4&lcol=1" class="js-tealium-tracking"><img data-lazy-img="https://static.politico.com/dims4/default/e17797b/2147483647/resize/403x%3E/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2Fd8%2F15%2F216feb3148138735a9f0cf2f6924%2F180808-alex-jones-gtty-1160.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Alex Jones is pictured. | Getty Images" data-size="promo_medium"></a></div>
+            </figure>
+            <div class="summary">
+                <header>
+                    <h3><a href="https://www.politico.com/magazine/story/2018/08/08/alex-jones-banned-lowry-219343" target="_top" data-tracking="mpos=right-rail&mid=LeadAndThumbnailModule&lindex=4&lcol=1" class="js-tealium-tracking">Don't Ban Alex Jones</a></h3>
+                </header>
+                <footer class="meta">
+                    <p class="byline">
+                            By <span class="vcard">Rich Lowry</span></p>
+                    </footer>
+            </div>
+        </article>
+        """
+        crawler = Crawler(config)
+        article = crawler.crawl(
+            CrawlCandidate(config, None, raw_html), crawl_sub=False)
+        self.assertEqual(
+            "Don't Ban Alex Jones"[0:30],
+            article.title[0:30])
+        self.assertEqual(
+            "https://www.politico.com/magazine/story/2018/08/08/alex-jones-banned-lowry-219343", article.links[0])
+        self.assertEqual(
+            "https://static.politico.com/dims4/default/e17797b/2147483647/resize/403x%3E/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2Fd8%2F15%2F216feb3148138735a9f0cf2f6924%2F180808-alex-jones-gtty-1160.jpg", article.top_image.get_src())
+        self.assertEqual(article.hcards[0]["n"], "Rich Lowry")
+
+    def test_raw_article_content_4(self):
+        config = self.getConfig()
+        config.enable_image_fetching = True
+        raw_html = """
+        <article class="story theme-summary">
+            <a class="story-link" href="https://www.nytimes.com/video/us/politics/100000006037851/sanders-media-enemy-of-the-people.html">
+                        <div class="wide-thumb">
+                    <img src="https://static01.nyt.com/images/2018/08/03/us/politics/03acosta-alpha2/03acosta-alpha2-videoSmall.jpg" role="presentation" alt="Sanders Won't Say the Media Is Not the ‘Enemy’">
+                    <div class="media-action-overlay">
+                        <i class="icon video-icon"></i>
+                    </div>
+                </div>
+                        <div class="story-body">
+                    <h2 class="headline">Sanders Won't Say the Media Is Not the ‘Enemy’</h2>
+                    <time class="dateline" datetime="2018-08-02" itemprop="dateModified" content="2018-08-02">Aug. 2, 2018</time>
+                </div>
+            </a>
+        </article>
+        """
+        crawler = Crawler(config)
+        article = crawler.crawl(
+            CrawlCandidate(config, None, raw_html), crawl_sub=False)
+        self.assertEqual(
+            "Sanders Won't Say the Media Is Not the "[0:30],
+            article.title[0:30])
+
+        self.assertEqual(
+            "https://www.nytimes.com/video/us/politics/100000006037851/sanders-media-enemy-of-the-people.html", article.html_links[0].url)
+        self.assertEqual(
+            "https://static01.nyt.com/images/2018/08/03/us/politics/03acosta-alpha2/03acosta-alpha2-videoSmall.jpg", article.top_image.get_src())
+        self.assertEqual(article.microdata["article"]["datemodified"], "2018-08-02")
+
+    def test_sub_articles_1(self):
+        article = self.getArticle()
+        self.assertTrue(len(article.html_links) > 0)
+        self.assertTrue(len(article.sub_articles) == 0)
 
     def test_sub_articles_2(self):
         article = self.getArticle()
@@ -375,8 +486,6 @@ class TestSubArticleExtraction(TestExtractionBase):
             article.sub_articles[40].crawled_article.title[0:20],
             "Top Trump Campaign Aides Are Portrayed"[0:20])
 
-
-    def test_sub_articles_1(self):
+    def test_sub_articles_3(self):
         article = self.getArticle()
-        self.assertTrue(len(article.html_links) > 0)
-        self.assertTrue(len(article.sub_articles) == 0)
+        self.assertTrue(len(article.sub_articles) > 0)
