@@ -31,6 +31,7 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
+    {'attr': 'id', 'value': 'story-body-items'},
     {'tag': 'article'},
 ]
 
@@ -104,7 +105,6 @@ class ContentExtractor(BaseExtractor):
         i = 0
         parent_nodes = []
         nodes_with_text = []
-
         for node in nodes_to_check:
             text_node = self.parser.getText(node)
             word_stats = self.stopwords_class(language=self.get_language()).get_stopword_count(text_node)
