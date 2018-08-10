@@ -37,18 +37,18 @@ class DocumentCleaner(object):
 
         # nodes to remove regexp
         self.remove_nodes_re = (
-        "^side$|combx|retweet|mediaarticlerelated|menucontainer|"
-        "navbar|storytopbar-bucket|utility-bar|inline-share-tools"
-        "|comment|PopularQuestions|contact|foot|footer|Footer|footnote"
-        "|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt"
-        "|^links$|meta$|shoutbox|sponsor"
-        "|tags|socialnetworking|socialNetworking|cnnStryHghLght"
-        "|cnn_stryspcvbx|^inset$|pagetools|post-attributes"
-        "|welcome_form|contentTools2|the_answers"
-        "|communitypromo|runaroundLeft|subscribe|vcard|articleheadings"
-        "|date|^print$|popup|author-dropdown|tools|socialtools|byline"
-        "|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text"
-        "|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts"
+        r"\b(^side$|combx|retweet|mediaarticlerelated|menucontainer|"
+        r"navbar|storytopbar-bucket|utility-bar|inline-share-tools"
+        r"|comment|PopularQuestions|contact|foot|footer|Footer|footnote"
+        r"|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt"
+        r"|^links$|meta$|shoutbox|sponsor"
+        r"|tags|socialnetworking|socialNetworking|cnnStryHghLght"
+        r"|cnn_stryspcvbx|^inset$|pagetools|post-attributes"
+        r"|welcome_form|contentTools2|the_answers"
+        r"|communitypromo|runaroundLeft|subscribe|subscription|vcard|articleheadings"
+        r"|date|^print$|popup|author-dropdown|tools|socialtools|byline"
+        r"|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text"
+        r"|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts)\b"
         )
         self.regexp_namespace = "http://exslt.org/regular-expressions"
         self.nauthy_ids_re = "descendant::*[re:test(@id, '%s', 'i')]" % self.remove_nodes_re
