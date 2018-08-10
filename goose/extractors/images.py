@@ -78,9 +78,10 @@ class ImageExtractor(BaseExtractor):
         if image:
             return image
 
-        image = self.check_large_images(topNode, 0, 0)
-        if image:
-            return image
+        if self.config.enable_image_download:
+            image = self.check_large_images(topNode, 0, 0)
+            if image:
+                return image
 
         image = self.check_meta_tag()
         if image:
@@ -202,14 +203,15 @@ class ImageExtractor(BaseExtractor):
         image.extraction_type = extraction_type
         image.confidence_score = score
 
-        # check if we have a local image
-        # in order to add more information
-        # on the Image object
-        local_image = self.get_local_image(image.src)
-        if local_image:
-            image.bytes = local_image.bytes
-            image.height = local_image.height
-            image.width = local_image.width
+        if self.config.enable_image_download:
+            # check if we have a local image
+            # in order to add more information
+            # on the Image object
+            local_image = self.get_local_image(image.src)
+            if local_image:
+                image.bytes = local_image.bytes
+                image.height = local_image.height
+                image.width = local_image.width
 
         # return the image
         return image
@@ -391,6 +393,27 @@ class ImageExtractor(BaseExtractor):
                 src = self.parser.getAttribute(image, attr='src')
                 if src:
                     return self.get_image(image, src, score=90, extraction_type='known')
+
+        for tag in ['figure']:
+            elements = self.parser.getElementsByTag(doc, tag=tag)
+            image = _check_elements(elements)
+            if image is not None:
+                src = self.parser.getAttribute(image, attr='src')
+                if src.find("data:image") == 0:
+                    src = None
+                    for attr in image.attrib:
+                        if "img" in attr:
+                            src = self.parser.getAttribute(image, attr=attr)
+                            break
+                if src:
+                    return self.get_image(image, src, score=90, extraction_type='known')
+
+        #Since, nothing worked, pick any img.
+        image = _check_elements(doc)
+        if image is not None:
+            src = self.parser.getAttribute(image, attr='src')
+            if src:
+                return self.get_image(image, src, score=90, extraction_type='known')
 
         return None
 

@@ -50,6 +50,7 @@ class Configuration(object):
         # image extractor to implement the ImageExtractor
         # interface to build your own
         self.enable_image_fetching = True
+        self.enable_image_download = True#to fasten up image checking
 
         # set this valriable to False if you want to force
         # the article language. OtherWise it will attempt to
