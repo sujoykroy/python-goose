@@ -16,6 +16,11 @@ class MicroDataExtractor(BaseExtractor):
             if item_type not in item_scopes:
                 item_scopes[item_type] = []
             item_scopes[item_type].append(self.getItemprops(node))
+
+        if not item_scopes:
+            props = self.getItemprops(self.article.doc)
+            if props:
+                item_scopes["article"] = props
         return item_scopes
 
     def getItemprops(self, node):
