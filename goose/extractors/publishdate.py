@@ -28,6 +28,7 @@ KNOWN_PUBLISH_DATE_TAGS = [
     {'attribute': 'property', 'value': 'article:published_time', 'content': 'content'},
     {'attribute': 'name', 'value': 'OriginalPublicationDate', 'content': 'content'},
     {'attribute': 'itemprop', 'value': 'datePublished', 'content': 'datetime'},
+    {'attribute': 'id', 'value': 'publish_date', 'content': None},
 ]
 
 
@@ -39,6 +40,8 @@ class PublishDateExtractor(BaseExtractor):
                             attr=known_meta_tag['attribute'],
                             value=known_meta_tag['value'])
             if meta_tags:
+                if not known_meta_tag['content']:
+                    return self.parser.getText(meta_tags[0])
                 return self.parser.getAttribute(
                     meta_tags[0],
                     known_meta_tag['content']
