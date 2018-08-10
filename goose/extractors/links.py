@@ -54,7 +54,7 @@ class LinksExtractor(BaseExtractor):
 
     def extract_html_links(self):
         links = []
-        items = self.parser.getElementsByTag(self.article.top_node, 'a')
+        items = self.parser.getElementsByTag(self.article.doc, 'a')
         for i in items:
             attr = self.parser.getAttribute(i, 'href')
             if not attr:
@@ -68,7 +68,8 @@ class LinksExtractor(BaseExtractor):
                 attr = self.article.site_domain + attr[1:]
             else:
                 link_site_domain = goose.text.get_site_domain(attr)
-                if link_site_domain != self.article.site_domain:
+
+                if self.article.site_domain and link_site_domain != self.article.site_domain:
                     continue
                 last_seg = attr.split("/")[-1]
                 if not last_seg or last_seg[0] == "#":
