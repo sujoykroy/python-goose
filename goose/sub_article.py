@@ -7,6 +7,7 @@ class SubArticle(object):
         self.parser = parser
         self.node = node
         self.outer_html = self.parser.outerHtml(node)
+        self.crawled_article = None
 
     @classmethod
     def get_parsing_candidate(cls, node):

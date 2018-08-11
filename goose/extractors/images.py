@@ -407,7 +407,7 @@ class ImageExtractor(BaseExtractor):
             image = self._check_elements(elements)
             if image is not None:
                 src = self.parser.getAttribute(image, attr='src')
-                if src.find("data:image") == 0:
+                if src and src.find("data:image") == 0:
                     src = None
                     for attr in image.attrib:
                         if "img" in attr:
