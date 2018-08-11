@@ -86,6 +86,17 @@ class ImageExtractor(BaseExtractor):
         image = self.check_meta_tag()
         if image:
             return image
+
+        #Since, nothing worked, pick any img.
+        image = self._check_elements(self.article.raw_doc)
+        if image is not None:
+            src = self.parser.getAttribute(image, attr='src')
+            if src:
+                return self.get_image(image, src, score=80, extraction_type='known')
+
+        return None
+
+
         return Image()
 
     def check_meta_tag(self):
@@ -344,6 +355,20 @@ class ImageExtractor(BaseExtractor):
             return self.article.domain.replace('www.', '')
         return None
 
+    def _check_elements(self, elements):
+        image = None
+        for element in elements:
+            tag = self.parser.getTag(element)
+            if tag == 'img':
+                image = element
+                return image
+            else:
+                images = self.parser.getElementsByTag(element, tag='img')
+                if images:
+                    image = images[0]
+                    return image
+        return image
+
     def check_known_elements(self):
         """\
         in here we check for known image contains from sites
@@ -362,24 +387,10 @@ class ImageExtractor(BaseExtractor):
         image = None
         doc = self.article.raw_doc
 
-        def _check_elements(elements):
-            image = None
-            for element in elements:
-                tag = self.parser.getTag(element)
-                if tag == 'img':
-                    image = element
-                    return image
-                else:
-                    images = self.parser.getElementsByTag(element, tag='img')
-                    if images:
-                        image = images[0]
-                        return image
-            return image
-
         # check for elements with known id
         for css in KNOWN_IMG_DOM_NAMES:
             elements = self.parser.getElementsByTag(doc, attr="id", value=css)
-            image = _check_elements(elements)
+            image = self._check_elements(elements)
             if image is not None:
                 src = self.parser.getAttribute(image, attr='src')
                 if src:
@@ -388,7 +399,7 @@ class ImageExtractor(BaseExtractor):
         # check for elements with known classes
         for css in KNOWN_IMG_DOM_NAMES:
             elements = self.parser.getElementsByTag(doc, attr='class', value=css)
-            image = _check_elements(elements)
+            image = self._check_elements(elements)
             if image is not None:
                 src = self.parser.getAttribute(image, attr='src')
                 if src:
@@ -396,7 +407,7 @@ class ImageExtractor(BaseExtractor):
 
         for tag in ['figure']:
             elements = self.parser.getElementsByTag(doc, tag=tag)
-            image = _check_elements(elements)
+            image = self._check_elements(elements)
             if image is not None:
                 src = self.parser.getAttribute(image, attr='src')
                 if src.find("data:image") == 0:
@@ -407,14 +418,6 @@ class ImageExtractor(BaseExtractor):
                             break
                 if src:
                     return self.get_image(image, src, score=90, extraction_type='known')
-
-        #Since, nothing worked, pick any img.
-        image = _check_elements(doc)
-        if image is not None:
-            src = self.parser.getAttribute(image, attr='src')
-            if src:
-                return self.get_image(image, src, score=90, extraction_type='known')
-
         return None
 
     def build_image_path(self, src):
