@@ -91,11 +91,8 @@ class ImageExtractor(BaseExtractor):
         image = self._check_elements(self.article.raw_doc)
         if image is not None:
             src = self.parser.getAttribute(image, attr='src')
-            if src:
-                return self.get_image(image, src, score=80, extraction_type='known')
-
-        return None
-
+            if src and src[-1] != "/":
+                return self.get_image(image, src, score=80, extraction_type='any')
 
         return Image()
 
