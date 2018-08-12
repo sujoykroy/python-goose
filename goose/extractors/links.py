@@ -64,7 +64,7 @@ class LinksExtractor(BaseExtractor):
                 continue
             if self.BAD_HTML_LINK_NAME.search(attr):
                 continue
-            if attr[0] == "/":
+            if attr[0] == "/" and attr[1:2] != "/":#exlcude //ww.abc.com type names
                 attr = self.article.site_domain + attr[1:]
             else:
                 link_site_domain = goose.text.get_site_domain(attr)

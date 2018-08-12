@@ -483,12 +483,12 @@ class TestSubArticleExtraction(TestExtractionBase):
 
     def test_sub_articles_2(self):
         article = self.getArticle()
-        self.assertEqual(43, len(article.sub_articles))
+        self.assertEqual(42, len(article.sub_articles))
         self.assertEqual(
             article.sub_articles[0].crawled_article.title[0:20],
-            "Boris Johnson Speaks, and His Many Critics"[0:20])
+            "Donald Trump Runs For Governor"[0:20])
         self.assertEqual(
-            article.sub_articles[40].crawled_article.title[0:20],
+            article.sub_articles[39].crawled_article.title[0:20],
             "Top Trump Campaign Aides Are Portrayed"[0:20])
 
     def test_sub_articles_3(self):

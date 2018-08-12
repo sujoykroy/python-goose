@@ -234,8 +234,12 @@ class Crawler(object):
         self.release_resources()
 
         if crawl_sub and len(self.article.sub_articles) > 1:
+            active_sub_articles = []
             for i in range(len(self.article.sub_articles)):
                 sub_article = self.article.sub_articles[i]
+                if sub_article.node == self.article.doc:
+                    continue
+                active_sub_articles.append(sub_article)
                 crawler = Crawler(self.config)
                 crawled_article = crawler.crawl(
                     CrawlCandidate(
@@ -243,7 +247,8 @@ class Crawler(object):
                     crawl_sub=False
                 )
                 sub_article.crawled_article = crawled_article
-
+            del self.article.sub_articles[:]
+            self.article.sub_articles.extend(active_sub_articles)
         # return the article
         return self.article
 
