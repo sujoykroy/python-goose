@@ -53,8 +53,11 @@ class Parser(object):
 
     @classmethod
     def fromstring(self, html):
-        html = encodeValue(html)
-        self.doc = lxml.html.fromstring(html)
+        encoded_html = encodeValue(html)
+        try:
+            self.doc = lxml.html.fromstring(encoded_html)
+        except ValueError:#This will handle "Invalid PI" error
+            self.doc = lxml.html.fromstring(html)
         return self.doc
 
     @classmethod

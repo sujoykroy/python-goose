@@ -128,6 +128,13 @@ class TestExtractions(TestExtractionBase):
         fields = ['cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_msn2(self):
+        config = self.getConfig()
+        config.enable_image_fetching = True
+        article = self.getArticle()
+        fields = ["authors", 'cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
     # #########################################
     # # FAIL CHECK
     # # UNICODE

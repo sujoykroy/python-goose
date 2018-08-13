@@ -28,7 +28,7 @@ from goose.version import version_info, __version__
 from goose.configuration import Configuration
 from goose.crawler import CrawlCandidate
 from goose.crawler import Crawler
-
+from goose.article import Article
 
 class Goose(object):
     """\
@@ -59,13 +59,15 @@ class Goose(object):
         pass
 
     def crawl(self, crawl_candiate):
-        parsers = list(self.config.available_parsers)
+        parsers = self.config.available_parsers
         parsers.remove(self.config.parser_class)
         try:
             crawler = Crawler(self.config)
             article = crawler.crawl(crawl_candiate)
         except (UnicodeDecodeError, ValueError) as e:
             print(e)
+            if not parsers:
+                return Article()
             self.config.parser_class = parsers[0]
             return self.crawl(crawl_candiate)
         return article
