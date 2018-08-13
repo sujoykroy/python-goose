@@ -48,12 +48,18 @@ class DocumentCleaner(object):
         r"|communitypromo|runaroundLeft|subscribe|subscription|vcard|articleheadings"
         r"|date|^print$|popup|author-dropdown|tools|socialtools|byline"
         r"|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text"
-        r"|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts)\b"
+        r"|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts"
+        r")\b"
         )
+        #self.remove_tags_re = r"aside"
+
         self.regexp_namespace = "http://exslt.org/regular-expressions"
         self.nauthy_ids_re = "descendant::*[re:test(@id, '%s', 'i')]" % self.remove_nodes_re
         self.nauthy_classes_re = "descendant::*[re:test(@class, '%s', 'i')]" % self.remove_nodes_re
         self.nauthy_names_re = "descendant::*[re:test(@name, '%s', 'i')]" % self.remove_nodes_re
+
+        #self.nauthy_tags_re = "descendant::*[re:test(@local-name(), '%s', 'i')]" % self.remove_tags_re
+
         self.div_to_p_re = r"<(a|blockquote|dl|div|img|ol|p|pre|table|ul)"
         self.caption_re = "^caption$"
         self.google_re = " google "
@@ -68,7 +74,6 @@ class DocumentCleaner(object):
 
     def clean(self):
         doc_to_clean = self.article.doc
-        doc_to_clean = self.normalize_nested_singular_ptags(doc_to_clean)
         doc_to_clean = self.clean_body_classes(doc_to_clean)
         doc_to_clean = self.clean_article_tags(doc_to_clean)
         doc_to_clean = self.clean_em_tags(doc_to_clean)
@@ -82,6 +87,7 @@ class DocumentCleaner(object):
         doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.facebook_braodcasting_re)
         doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.twitter_re)
         doc_to_clean = self.clean_para_spans(doc_to_clean)
+        doc_to_clean = self.normalize_nested_singular_ptags(doc_to_clean)
         doc_to_clean = self.div_to_para(doc_to_clean, 'div')
         doc_to_clean = self.div_to_para(doc_to_clean, 'span')
         return doc_to_clean
@@ -95,8 +101,17 @@ class DocumentCleaner(object):
             self.parser.delAttribute(elements[0], attr="class")
         return doc
 
+    def remove_nested_article_tags(self, doc):
+        if not self.parser.getTag(doc) == "article":
+            return doc
+        articles = self.parser.getElementsByTag(doc, tag='article')
+        for article in articles:
+            self.parser.remove(article)
+        return doc
+
     def clean_article_tags(self, doc):
         articles = self.parser.getElementsByTag(doc, tag='article')
+        doc_tag = self.parser.getTag(doc)
         for article in articles:
             for attr in ['id', 'name', 'class']:
                 self.parser.delAttribute(article, attr=attr)
@@ -261,7 +276,8 @@ class DocumentCleaner(object):
         ptags = self.parser.xpath_re(doc, "//p")
         for tag in ptags:
             parent = self.parser.getParent(tag)
-            while parent != doc and parent is not None and len(self.parser.getChildren(parent)) == 1:
+            while parent != doc and parent is not None and \
+                len(self.parser.getChildren(parent)) == 1:
                 self.parser.stripTags(parent, self.parser.getTag(tag))
                 self.parser.replaceTag(parent, 'p')
                 tag = parent

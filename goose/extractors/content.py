@@ -28,6 +28,7 @@ from operator import itemgetter
 from goose.sub_article import SubArticle
 
 KNOWN_ARTICLE_CONTENT_TAGS = [
+    {'tag': 'article', 'attr': 'class', 'value': 'story-main-content'},
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
@@ -36,6 +37,9 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
 ]
 
 BAD_ARTICLE_ATTRIBS = set(('alert',))
+
+REMOVE_TAGS_RE = r"fig*|header"
+NAUGHTY_TAGS_RE = "descendant::*[re:test(local-name(), '%s', 'i')]" % REMOVE_TAGS_RE
 
 class ContentExtractor(BaseExtractor):
 
@@ -53,9 +57,12 @@ class ContentExtractor(BaseExtractor):
 
     def get_known_article_tags(self):
         for item in KNOWN_ARTICLE_CONTENT_TAGS:
-            nodes = self.parser.getElementsByTag(
-                            self.article.doc,
-                            **item)
+            if item.get("xpath"):
+                nodes = self.parser.xpath_re(self.article.doc, item["xpath"])
+            else:
+                nodes = self.parser.getElementsByTag(
+                                self.article.doc,
+                                **item)
             if len(nodes):
                 for node in nodes:
                     self.article.sub_articles.append(
@@ -424,6 +431,12 @@ class ContentExtractor(BaseExtractor):
                     or self.is_table_and_no_para_exist(e) \
                     or not self.is_nodescore_threshold_met(node, e):
                     self.parser.remove(e)
+
+        # tag
+        naughty_tags = self.parser.xpath_re(node, NAUGHTY_TAGS_RE)
+        for sub_node in naughty_tags:
+            self.parser.remove(sub_node)
+
         return node
 
 

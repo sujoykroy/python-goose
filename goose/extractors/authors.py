@@ -25,12 +25,13 @@ import re
 from goose.extractors import BaseExtractor
 
 KNOWN_AUTHOR_TAGS = [
-    {'attribute': 'class', 'value': 'ng_byline_name', 'content': None}
+    {'attribute': 'class', 'value': 'ng_byline_name', 'content': None},
+    {'xpath': "descendant::*[contains(@class, 'byline')]", 'content': None},
 ]
 
 class AuthorsExtractor(BaseExtractor):
-    AUTHOR_REPLACER = re.compile("^by\s+", flags=re.IGNORECASE)
-    AUTHOR_SPLITTER = re.compile(r"\band\b", flags=re.IGNORECASE)
+    AUTHOR_REPLACER = re.compile("(^by\s+)|([\|\/].+)", flags=re.IGNORECASE)
+    AUTHOR_SPLITTER = re.compile(r"\band\b|,", flags=re.IGNORECASE)
 
     def extract(self):
         authors = []
@@ -52,10 +53,13 @@ class AuthorsExtractor(BaseExtractor):
                 authors.append(self.parser.getText(author_node))
 
         for known_tag in KNOWN_AUTHOR_TAGS:
-            tags = self.parser.getElementsByTag(
-                            self.article.doc,
-                            attr=known_tag['attribute'],
-                            value=known_tag['value'])
+            if known_tag.get('xpath'):
+                tags = self.parser.xpath_re(self.article.doc, known_tag.get('xpath'))
+            else:
+                tags = self.parser.getElementsByTag(
+                                self.article.doc,
+                                attr=known_tag['attribute'],
+                                value=known_tag['value'])
             if tags:
                 if not known_tag['content']:
                     author = self.parser.getText(tags[0])
@@ -68,26 +72,30 @@ class AuthorsExtractor(BaseExtractor):
 
         for item in self.article.microdata.get("newsarticle", []):
             author = item.get('author')
-            if not author:
+            if author:
                 authors.append(author)
 
         for item in self.article.microdata.get("person", []):
             author = item.get('name')
-            if not author:
+            if author:
                 authors.append(author)
 
         for item in self.article.microdata.get("hcard", []):
             author = item.get('n')
-            if not author:
+            if author:
                 authors.append(author)
 
-        authors = list(set(authors))
         clean_authors = []
+        author_keys = {}
         for full_author in authors:
             if not full_author:
                 continue
             for author in self.AUTHOR_SPLITTER.split(full_author):
                 author = self.AUTHOR_REPLACER.sub("", author).strip()
+                if author.lower() in author_keys:
+                    continue
+                author_keys[author.lower()] = True
                 clean_authors.append(author)
 
+        clean_authors = list(set(clean_authors))
         return clean_authors

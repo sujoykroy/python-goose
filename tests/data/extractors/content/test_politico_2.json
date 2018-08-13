@@ -1,0 +1,8 @@
+{
+    "url": "https://www.politico.com/story/2018/08/11/farmers-china-soy-bean-market-share-734773",
+    "expected": {
+        "authors": ["HE HUIFENG"],
+        "publish_date": "2018-08-11 14:10:03",
+        "cleaned_text":  "This story is being published by POLITICO as part of a content partnership with the South China Morning Post. It originally appeared on scmp.com on Aug. 11, 2018\n\nChina can easily find other countries to buy agricultural goods from instead of the U.S., its vice agriculture minister said, warning that American farmers could permanently lose their share of the Chinese market as a result of the trade war.\n\n“Many countries have the willingness and they totally have the capacity to take over the market share the U.S. is enjoying in China. If other countries become reliable suppliers for China, it will be very difficult for the U.S. to regain the market,” Han Jun told official Xinhua news agency in an interview on Friday.\n\nHe also warned that American farmers could lose the position in the Chinese market they have spent several decades building up. Han said they may not be able to make up the losses brought by retaliatory tariffs, even with the White House’s planned $12 billion aid package for farmers caught in the dispute."
+    }
+}

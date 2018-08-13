@@ -148,8 +148,6 @@ class Crawler(object):
         self.article.doc = doc
         self.article.raw_doc = deepcopy(doc)
 
-        self.article.microdata = self.microdata_extractor.extract()
-
         # open graph
         self.article.opengraph = self.opengraph_extractor.extract()
 
@@ -169,14 +167,6 @@ class Crawler(object):
         # tags
         self.article.tags = self.tags_extractor.extract()
 
-        # authors
-        self.article.authors = self.authors_extractor.extract()
-
-        # title
-        self.article.title = self.title_extractor.extract()
-
-        self.article.hcards = self.hcard_extractor.extract()
-
         # check for known node as content body
         # if we find one force the article.doc to be the found node
         # this will prevent the cleaner to remove unwanted text content
@@ -187,6 +177,21 @@ class Crawler(object):
 
         if self.article_body is not None:
             self.article.doc = self.article_body
+
+        self.article.doc = self.cleaner.remove_nested_article_tags(self.article.doc)
+
+        #microdata
+        self.article.microdata = self.microdata_extractor.extract()
+
+        # authors
+        self.article.authors = self.authors_extractor.extract()
+
+        # title
+        self.article.title = self.title_extractor.extract()
+
+        #hcard
+        self.article.hcards = self.hcard_extractor.extract()
+
 
         #self.extractor.extract_more(self.htmlfetcher)
 
