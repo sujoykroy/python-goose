@@ -165,6 +165,11 @@ class TestExtractions(TestExtractionBase):
         fields = ['authors', 'publish_date', 'cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_politico_3(self):
+        article = self.getArticle()
+        fields = ['authors', 'publish_date', 'cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+
     def test_businessinsider3(self):
         article = self.getArticle()
         fields = ['cleaned_text']

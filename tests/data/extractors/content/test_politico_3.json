@@ -1,0 +1,8 @@
+{
+    "url": "https://www.politico.eu/article/woody-johnson-iran-sanctions-uk-us-to-london-back-us-on-iran/",
+    "expected": {
+        "authors": 	["Jacopo Barigazzi"],
+        "publish_date": "2018-08-12T10:12:03+00:00",
+        "cleaned_text": "America’s top diplomat in London has urged Britain to support Washington’s push to renegotiate the Iran nuclear deal and impose economic sanctions in the country, days after the EU vowed to stand by the agreement.\n\n“America is turning up the pressure and we want the U.K. by our side,” Woody Johnson, the U.S. ambassador in London, said in an op-ed for the Telegraph published Sunday, calling on Britain “to use its considerable diplomatic power and influence and join us as we lead a concerted global effort towards a genuinely comprehensive agreement.”\n\nU.S. President Donald Trump’s decision to pull out of the Iran nuclear agreement — which he insisted is a “bad deal” that would not thwart Iran’s nuclear ambitions — in May dealt a heavy blow to European allies, who vowed to stand by the deal, known as the Joint Comprehensive Plan of Action (JCPOA)."
+    }
+}

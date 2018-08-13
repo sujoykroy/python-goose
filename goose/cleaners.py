@@ -49,7 +49,7 @@ class DocumentCleaner(object):
         r"|date|^print$|popup|author-dropdown|tools|socialtools|byline"
         r"|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text"
         r"|legende|ajoutVideo|timestamp|js_replies|image-caption|alerts"
-        r")\b"
+        r"|story-supplement)\b"
         )
         #self.remove_tags_re = r"aside"
 
