@@ -39,15 +39,17 @@ class AuthorsExtractor(BaseExtractor):
                             attr='itemprop',
                             value='author')
 
-        for author in author_nodes:
+        for author_node in author_nodes:
             name_nodes = self.parser.getElementsByTag(
-                            author,
+                            author_node,
                             attr='itemprop',
                             value='name')
 
             if len(name_nodes) > 0:
                 name = self.parser.getText(name_nodes[0])
                 authors.append(name)
+            else:
+                authors.append(self.parser.getText(author_node))
 
         for known_tag in KNOWN_AUTHOR_TAGS:
             tags = self.parser.getElementsByTag(
@@ -63,9 +65,27 @@ class AuthorsExtractor(BaseExtractor):
                         known_tag['content']
                     )
                 authors.append(author)
+
+        for item in self.article.microdata.get("newsarticle", []):
+            author = item.get('author')
+            if not author:
+                authors.append(author)
+
+        for item in self.article.microdata.get("person", []):
+            author = item.get('name')
+            if not author:
+                authors.append(author)
+
+        for item in self.article.microdata.get("hcard", []):
+            author = item.get('n')
+            if not author:
+                authors.append(author)
+
         authors = list(set(authors))
         clean_authors = []
         for full_author in authors:
+            if not full_author:
+                continue
             for author in self.AUTHOR_SPLITTER.split(full_author):
                 author = self.AUTHOR_REPLACER.sub("", author).strip()
                 clean_authors.append(author)

@@ -476,6 +476,35 @@ class TestSubArticleExtraction(TestExtractionBase):
             "https://static01.nyt.com/images/2018/08/03/us/politics/03acosta-alpha2/03acosta-alpha2-videoSmall.jpg", article.top_image.get_src())
         self.assertEqual(article.microdata["article"]["datemodified"], "2018-08-02")
 
+
+    def test_raw_article_author_1(self):
+        config = self.getConfig()
+        raw_html = """
+            <article class="story theme-summary  " itemscope="" itemtype="http://schema.org/NewsArticle">
+                <div class="story-body">
+                    <a class="story-link" href="https://www.nytimes.com/2018/08/13/nyregion/welfare-immigrants-trump-public-charge-rule.html?rref=collection%2Ftimestopic%2FTrump%2C%20Donald%20J.">
+                        <div class="story-meta">
+                                            <h2 class="headline" itemprop="headline">
+                                How Trump’s Plan for Immigrants on Welfare Could Hurt a Million New Yorkers                </h2>
+                            <p class="summary" itemprop="description">A proposed rule would make it difficult for immigrants and their family members who use government services to obtain permanent residency, city officials said.</p>
+                                                <p class="byline" itemprop="author">By LIZ ROBBINS</p>
+                                        </div><!-- close story-meta -->
+                                        <div class="wide-thumb">
+                                <img role="presentation" src="https://static01.nyt.com/images/2018/08/10/nyregion/10nyimmig/merlin_142140306_73a2c749-16e6-4fa0-b1d5-9851f715b353-mediumThreeByTwo210.jpg" alt="" itemprop="thumbnailUrl">
+                                                                    </div><!-- close wide-thumb -->
+                                </a>
+                </div><!-- close story-body -->
+                <footer class="story-footer">
+                    <time class="dateline" datetime="2018-08-13" itemprop="dateModified" content="2018-08-13">Aug. 13, 2018</time>
+                </footer>
+            </article>
+        """
+        crawler = Crawler(config)
+        article = crawler.crawl(
+            CrawlCandidate(config, None, raw_html), crawl_sub=False)
+        self.assertEqual(article.authors[0], "LIZ ROBBINS")
+
+
     def test_sub_articles_1(self):
         article = self.getArticle()
         self.assertTrue(len(article.html_links) > 0)
