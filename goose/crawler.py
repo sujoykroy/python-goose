@@ -21,7 +21,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import os
+import re
 import glob
+import urllib
+
 from copy import deepcopy
 from goose.article import Article
 from goose.sub_article import SubArticle
@@ -279,8 +282,9 @@ class Crawler(object):
         html = self.htmlfetcher.get_html(parsing_candidate.url)
         crawl_candidate.raw_html = html
 
-        #Twitter specific news crawling. Should be transferred to separate module.
-        if goose.text.get_site_domain(parsing_candidate.url) == "twitter.com":
+        #Twitter/Facebook specific news crawling. Should be transferred to separate module.
+        site_domain = goose.text.get_site_domain(parsing_candidate.url)
+        if site_domain == "twitter.com":
             doc = self.parser.fromstring(html)
             a_links = self.parser.getElementsByTag(
                 doc, tag='a', attr='class', value='twitter-timeline-link')
@@ -288,6 +292,23 @@ class Crawler(object):
                 parsing_candidate.url = self.parser.getAttribute(a_links[0], 'href')
                 html = self.htmlfetcher.get_html(parsing_candidate.url)
                 crawl_candidate.raw_html = html
+        elif site_domain == "www.facebook.com" and "/posts/" in parsing_candidate.url:
+            html = html.replace("<!--", "")
+            html = html.replace("-->", "")
+            doc = self.parser.fromstring(html)
+            a_links = self.parser.xpath_re(
+                doc, "descendant::a")
+
+            link_re = re.compile(r"https?://l\.facebook\.com/l\.php\?u=(?P<url>[^&]+)%3F")
+            for a_link in a_links:
+                href = a_link.attrib.get('href')
+                match = link_re.search(href)
+                if match:
+                    url = match.groupdict()["url"]
+                    parsing_candidate.url = urllib.unquote(url)
+                    html = self.htmlfetcher.get_html(parsing_candidate.url)
+                    crawl_candidate.raw_html = html
+                    break
 
         self.article.additional_data.update({
             'request': self.htmlfetcher.request,
