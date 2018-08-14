@@ -29,14 +29,14 @@ from goose.utils.encoding import smart_str
 from goose.utils.encoding import DjangoUnicodeDecodeError
 
 TABSSPACE = re.compile(r'[\s\t]+')
-SITE_DOMAIN_EXTRACTOR = re.compile("^(https?://)?([^/]+)/")
+SITE_DOMAIN_EXTRACTOR = re.compile("^(https?://)?(?P<domain>[^/]+)/")
 
 def get_site_domain(text):
     if not text:
         return ""
     matches = SITE_DOMAIN_EXTRACTOR.search(text)
     if matches:
-        return matches.group()
+        return matches.groupdict().get('domain', '')
     return ""
 
 def innerTrim(value):
