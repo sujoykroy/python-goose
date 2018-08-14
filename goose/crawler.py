@@ -297,9 +297,9 @@ class Crawler(object):
             html = html.replace("-->", "")
             doc = self.parser.fromstring(html)
             a_links = self.parser.xpath_re(
-                doc, "descendant::a")
+                doc, "//*[@class='hidden_elem']/descendant::a")
 
-            link_re = re.compile(r"https?://l\.facebook\.com/l\.php\?u=(?P<url>[^&]+)%3F")
+            link_re = re.compile(r"https?://l\.facebook\.com/l\.php\?u=(?P<url>[^&]+)&h")
             for a_link in a_links:
                 href = a_link.attrib.get('href')
                 match = link_re.search(href)
