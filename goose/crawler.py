@@ -278,6 +278,17 @@ class Crawler(object):
         # fetch HTML
         html = self.htmlfetcher.get_html(parsing_candidate.url)
         crawl_candidate.raw_html = html
+
+        #Twitter specific news crawling. Should be transferred to separate module.
+        if goose.text.get_site_domain(parsing_candidate.url) == "twitter.com":
+            doc = self.parser.fromstring(html)
+            a_links = self.parser.getElementsByTag(
+                doc, tag='a', attr='class', value='twitter-timeline-link')
+            if a_links:
+                parsing_candidate.url = self.parser.getAttribute(a_links[0], 'href')
+                html = self.htmlfetcher.get_html(parsing_candidate.url)
+                crawl_candidate.raw_html = html
+
         self.article.additional_data.update({
             'request': self.htmlfetcher.request,
             'result': self.htmlfetcher.result,
