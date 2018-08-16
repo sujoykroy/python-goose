@@ -24,6 +24,7 @@ import os
 import re
 import glob
 import urllib
+import json
 
 from copy import deepcopy
 from goose.article import Article
@@ -169,6 +170,18 @@ class Crawler(object):
 
         # tags
         self.article.tags = self.tags_extractor.extract()
+
+        #Parse json ld
+        json_ld_tags = self.parser.xpath_re(
+            self.article.doc, 'descendant::script[@type="application/ld+json"]')
+        if json_ld_tags:
+            json_ld_text = self.parser.getText(json_ld_tags[0])
+            for i in range(2):
+                try:
+                    self.article.json_ld = json.loads(json_ld_text)
+                except Exception as ex:
+                    if i == 0:
+                        json_ld_text = json_ld_text.replace('""', '", "')
 
         # check for known node as content body
         # if we find one force the article.doc to be the found node

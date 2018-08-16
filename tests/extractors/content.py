@@ -277,6 +277,11 @@ class TestExtractions(TestExtractionBase):
         fields = ['cleaned_text', 'publish_date', "authors"]
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_normantranscript(self):
+        article = self.getArticle()
+        fields = ['json_ld']
+        self.runArticleAssertions(article=article, fields=fields)
+
 
 class TestArticleTopNode(TestExtractionBase):
 

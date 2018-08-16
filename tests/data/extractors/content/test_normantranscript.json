@@ -1,0 +1,14 @@
+{
+    "url": "http://www.normantranscript.com/news/aclu-federal-agencies-setting-a-trap-to-deport-immigrants/article_985485c4-a0b1-11e8-8ffe-ffabba7518fb.html",
+    "expected":{
+        "json_ld": {
+            "@context" : "http://schema.org",
+            "@type" : "Organization",
+            "url" : "http://www.normantranscript.com",
+            "sameAs" : [
+                "https://visitor.r20.constantcontact.com/d.jsp?llr=d8oml49ab&p=oi&m=1128481045347&sit=qdiwgcwlb&f=e56d65d3-ce40-4ce4-8fbe-2894ebd749c7",
+                "https://www.facebook.com/normantranscript/","https://twitter.com/NormanNews"
+            ]
+        }
+    }
+}

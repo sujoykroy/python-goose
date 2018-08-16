@@ -117,6 +117,7 @@ class Article(object):
         # A property bucket for consumers of goose to store custom data extractions.
         self.additional_data = {}
 
+        self.json_ld = {}
         self.sub_articles = []
 
     def get_relative_html_links(self):
