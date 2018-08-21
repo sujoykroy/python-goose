@@ -90,6 +90,9 @@ class AuthorsExtractor(BaseExtractor):
         for full_author in authors:
             if not full_author:
                 continue
+            if not isinstance(full_author, str) and \
+               not isinstance(full_author, unicode):
+                continue
             for author in self.AUTHOR_SPLITTER.split(full_author):
                 author = self.AUTHOR_REPLACER.sub("", author).strip()
                 if author.lower() in author_keys:
