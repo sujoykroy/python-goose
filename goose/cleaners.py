@@ -64,6 +64,7 @@ class DocumentCleaner(object):
         self.caption_re = "^caption$"
         self.google_re = " google "
         self.entries_re = "^[^entry-]more.*$"
+        self.read_re = "read.*more$"
         self.facebook_re = "[^-]facebook"
         self.facebook_braodcasting_re = "facebook-broadcasting"
         self.twitter_re = "[^-]twitter"
@@ -86,6 +87,7 @@ class DocumentCleaner(object):
         doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.facebook_re)
         doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.facebook_braodcasting_re)
         doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.twitter_re)
+        doc_to_clean = self.remove_nodes_regex(doc_to_clean, self.read_re)
         doc_to_clean = self.clean_para_spans(doc_to_clean)
         doc_to_clean = self.normalize_nested_singular_ptags(doc_to_clean)
         doc_to_clean = self.div_to_para(doc_to_clean, 'div')
@@ -101,10 +103,11 @@ class DocumentCleaner(object):
             self.parser.delAttribute(elements[0], attr="class")
         return doc
 
-    def remove_nested_article_tags(self, doc):
-        if not self.parser.getTag(doc) == "article":
+    def remove_nested_article_tags(self, doc, excludes=None):
+        if not self.parser.getTag(doc) == "article" and \
+            not self.parser.getAttribute(doc, 'itemtype') == "http://schema.org/Article":
             return doc
-        articles = self.parser.getElementsByTag(doc, tag='article')
+        articles = self.parser.getElementsByTag(doc, tag='article', childs=True)
         for article in articles:
             self.parser.remove(article)
         return doc
@@ -273,13 +276,14 @@ class DocumentCleaner(object):
         return doc
 
     def normalize_nested_singular_ptags(self, doc):
-        ptags = self.parser.xpath_re(doc, "//p")
+        ptags = self.parser.xpath_re(doc, "descendant::p")
         for tag in ptags:
             parent = self.parser.getParent(tag)
             while parent != doc and parent is not None and \
                 len(self.parser.getChildren(parent)) == 1:
+                orig_tag = self.parser.getTag(tag)
                 self.parser.stripTags(parent, self.parser.getTag(tag))
-                self.parser.replaceTag(parent, 'p')
+                self.parser.replaceTag(parent, orig_tag)
                 tag = parent
                 parent = self.parser.getParent(tag)
         return doc

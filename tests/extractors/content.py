@@ -27,17 +27,7 @@ from goose.text import StopWordsArabic
 from goose.text import StopWordsKorean
 from goose.crawler import Crawler, CrawlCandidate
 
-from goose.extractors import site_plugins
-
-class MockContentResponseExtractors(MockResponseExtractors):
-    def response_file_map(self, url, func):
-        if url.startswith(site_plugins.latimes.API_BASE_URL):
-            return func + "_api_json"
-        return func
-
 class TestExtractions(TestExtractionBase):
-    callback = MockContentResponseExtractors
-
     def test_allnewlyrics1(self):
         article = self.getArticle()
         fields = ['title', 'cleaned_text']
@@ -169,7 +159,7 @@ class TestExtractions(TestExtractionBase):
 
     def test_politico_2(self):
         article = self.getArticle()
-        fields = ['authors', 'publish_date', 'cleaned_text']
+        fields = ['cleaned_text', 'publish_date', 'authors']
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_politico_3(self):
@@ -266,10 +256,8 @@ class TestExtractions(TestExtractionBase):
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_latimes_subsc(self):
-        #self.response_file_map
-
         article = self.getArticle()
-        fields = ['cleaned_text']
+        fields = ['authors', 'cleaned_text']
         self.runArticleAssertions(article=article, fields=fields)
 
     def test_miami_herald(self):
@@ -282,6 +270,10 @@ class TestExtractions(TestExtractionBase):
         fields = ['json_ld']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_newslocker(self):
+        article = self.getArticle()
+        fields = ["title", 'read_more_url']
+        self.runArticleAssertions(article=article, fields=fields)
 
 class TestArticleTopNode(TestExtractionBase):
 

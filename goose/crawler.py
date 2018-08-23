@@ -196,6 +196,11 @@ class Crawler(object):
 
         self.article.doc = self.cleaner.remove_nested_article_tags(self.article.doc)
 
+        for sub_article in self.article.sub_articles:
+            if sub_article.node == self.article.doc:
+                continue
+            self.parser.remove(sub_article.node)
+
         #microdata
         self.article.microdata = self.microdata_extractor.extract()
 
@@ -208,8 +213,7 @@ class Crawler(object):
         #hcard
         self.article.hcards = self.hcard_extractor.extract()
 
-
-        #self.extractor.extract_more(self.htmlfetcher)
+        self.article.read_more_url = self.links_extractor.extract_read_more()
 
         # before we do any calcs on the body itself let's clean up the document
         self.article.doc = self.cleaner.clean()
@@ -218,13 +222,6 @@ class Crawler(object):
         self.article.top_node = self.extractor.calculate_best_node()
         if self.article.top_node is None:
             self.article.top_node = self.article.doc
-
-        #if article_body was already found, use it as topnode
-        #if self.article.top_node is not None and \
-        #    self.article_body is not None and \
-        #        (self.extractor.get_score_by_avg(self.article.top_node) < 1 or \
-        #         self.extractor.get_node_count(self.article.top_node) == 1):
-        #    self.article.top_node = self.article_body
 
         # if we have a top node
         # let's process it

@@ -119,6 +119,7 @@ class Article(object):
 
         self.json_ld = {}
         self.sub_articles = []
+        self.read_more_url = None
 
     def get_relative_html_links(self):
         rel_links = []

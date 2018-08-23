@@ -45,7 +45,6 @@ class AuthorsExtractor(BaseExtractor):
                             author_node,
                             attr='itemprop',
                             value='name')
-
             if len(name_nodes) > 0:
                 name = self.parser.getText(name_nodes[0])
                 authors.append(name)
@@ -84,6 +83,10 @@ class AuthorsExtractor(BaseExtractor):
             author = item.get('n')
             if author:
                 authors.append(author)
+
+        author = self.article.metatags.get("author")
+        if author:
+            authors.append(author)
 
         clean_authors = []
         author_keys = {}

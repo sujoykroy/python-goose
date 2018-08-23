@@ -29,6 +29,7 @@ from goose.sub_article import SubArticle
 
 KNOWN_ARTICLE_CONTENT_TAGS = [
     {'tag': 'article', 'attr': 'class', 'value': 'story-main-content'},
+    {'xpath': "*[not(self::article)]/*[itemtype='http://schema.org/Article']"},
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
@@ -66,6 +67,9 @@ class ContentExtractor(BaseExtractor):
                                 **item)
             if len(nodes):
                 for node in nodes:
+                    if len(self.parser.xpath_re(
+                        node, 'descendant::*[self::div or self::p]')) == 0:
+                        continue
                     self.article.sub_articles.append(
                         SubArticle(node=node, parser=self.parser))
                     #node_class = self.parser.getAttribute(node, 'class')

@@ -101,7 +101,18 @@ class TitleExtractor(BaseExtractor):
         newsarticles = self.article.microdata.get('newsarticle')
         if newsarticles:
             title = newsarticles[0].get('headline', '')
-            return self.clean_title(title)
+            if title:
+                return self.clean_title(title)
+
+        articles = self.article.microdata.get('article')
+        if articles:
+            if isinstance(articles, list):
+                article = articles[0]
+            else:
+                article = articles
+            title = article.get('headline', '')
+            if title:
+                return self.clean_title(title)
 
         #get text of item with class=headline
         class_headline = self.parser.getElementsByTag(

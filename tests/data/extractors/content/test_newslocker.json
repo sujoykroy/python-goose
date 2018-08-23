@@ -1,0 +1,8 @@
+{
+    "url":  "http://www.newslocker.com/en-us/news/technology/china-gets-another-crispr-first-with-embryo-base-editing/",
+    "expected": {
+        "title": "China Gets Another Crispr First With Embryo Base Editing - Technology news - NewsLocker",
+        "read_more_url": "http://www.newslocker.com/en-us/news/technology/china-gets-another-crispr-first-with-embryo-base-editing/view/",
+        "cleaned_text": " Scientists in China have used a cutting-edge Crispr technique to repair a disease-causing mutation in viable human embryos."
+    }
+}

@@ -64,16 +64,32 @@ class LinksExtractor(BaseExtractor):
                 continue
             if self.BAD_HTML_LINK_NAME.search(attr):
                 continue
-            if attr[0] == "/" and attr[1:2] != "/":#exlcude //ww.abc.com type names
-                attr = self.article.site_domain + attr[1:]
-            else:
-                link_site_domain = goose.text.get_site_domain(attr)
-
-                if self.article.site_domain and link_site_domain != self.article.site_domain:
-                    continue
-                last_seg = attr.split("/")[-1]
-                if not last_seg or last_seg[0] == "#":
-                    continue
-
+            attr = self.get_clean_href(attr)
+            if not attr:
+                continue
             links.append(LinkItem(attr, text))
         return links
+
+    READ_MORE_RE = re.compile(r"read.*more", flags=re.IGNORECASE)
+    def extract_read_more(self):
+        items = self.parser.getElementsByTag(self.article.doc, "a")
+        for link in items:
+            text = self.parser.getText(link)
+            if not self.READ_MORE_RE.search(text):
+                continue
+            href = self.parser.getAttribute(link, 'href')
+            if href:
+                return href
+        return None
+
+    def get_clean_href(self, href):
+        if href[0] == "/" and href[1:2] != "/":#exlcude //ww.abc.com type names
+            href = self.article.site_domain + href[1:]
+        else:
+            link_site_domain = goose.text.get_site_domain(href)
+            if self.article.site_domain and link_site_domain != self.article.site_domain:
+                return None
+            last_seg = href.split("/")[-1]
+            if not last_seg or last_seg[0] == "#":
+                return None
+        return href
