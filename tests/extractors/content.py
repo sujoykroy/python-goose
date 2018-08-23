@@ -270,11 +270,6 @@ class TestExtractions(TestExtractionBase):
         fields = ['json_ld']
         self.runArticleAssertions(article=article, fields=fields)
 
-    def test_newslocker(self):
-        article = self.getArticle()
-        fields = ["title", 'read_more_url']
-        self.runArticleAssertions(article=article, fields=fields)
-
 class TestArticleTopNode(TestExtractionBase):
 
     def test_articlebody_itemprop(self):
@@ -537,3 +532,9 @@ class TestSubArticleExtraction(TestExtractionBase):
     def test_sub_articles_3(self):
         article = self.getArticle()
         self.assertTrue(len(article.sub_articles) > 0)
+
+    def test_newslocker(self):
+        article = self.getArticle()
+        fields = ["title", 'read_more_url', 'cleaned_text']
+        self.runArticleAssertions(article=article, fields=fields)
+        self.assertTrue(len(article.sub_articles)> 0)

@@ -1,8 +1,8 @@
 {
-    "url":  "http://www.newslocker.com/en-us/news/technology/china-gets-another-crispr-first-with-embryo-base-editing/",
+    "url":  "http://www.newslocker.com/en-uk/profession/auto_news/geelys-china-sales-pass-japanese-rivals-as-automaker-chases-vw-gm/",
     "expected": {
         "title": "China Gets Another Crispr First With Embryo Base Editing - Technology news - NewsLocker",
         "read_more_url": "http://www.newslocker.com/en-us/news/technology/china-gets-another-crispr-first-with-embryo-base-editing/view/",
-        "cleaned_text": " Scientists in China have used a cutting-edge Crispr technique to repair a disease-causing mutation in viable human embryos."
+        "cleaned_text": "Scientists in China have used a cutting-edge Crispr technique to repair a disease-causing mutation in viable human embryos."
     }
 }

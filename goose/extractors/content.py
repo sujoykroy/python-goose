@@ -29,13 +29,13 @@ from goose.sub_article import SubArticle
 
 KNOWN_ARTICLE_CONTENT_TAGS = [
     {'tag': 'article', 'attr': 'class', 'value': 'story-main-content'},
-    {'xpath': "*[not(self::article)]/*[itemtype='http://schema.org/Article']"},
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
     {'attr': 'id', 'value': 'story-body-items'},
     {'tag': 'article', 'attr': 'class', 'value': 'content'},
     {'tag': 'article'},
+    {'xpath': "descendant::*[not(ancestor::article) and @itemtype='http://schema.org/Article']"},
 ]
 
 BAD_ARTICLE_ATTRIBS = set(('alert',))
