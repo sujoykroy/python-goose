@@ -38,7 +38,8 @@ class LinkItem(dict):
         return self["text"]
 
     def __repr__(self):
-        return "(url={0}, text={1})".format(self.url, self.text.encode("utf-8"))
+        return "(url={0}, text={1})".format(
+            self.url.encode("utf-8", 'ignore'), self.text.encode("utf-8", 'ignore'))
 
 class LinksExtractor(BaseExtractor):
     BAD_HTML_LINK_NAME = re.compile(r'/style/')
