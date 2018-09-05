@@ -57,5 +57,18 @@ class HtmlFetcher(object):
 
         # read the result content
         if self.result is not None:
-            return self.result.read()
+            maxsize = self.config.html_download_max_size
+            if maxsize > 0:
+                content = ''
+                chunk_size = 2048
+                chunk = self.result.read(chunk_size)
+                while chunk:
+                    content += chunk
+                    if len(content) > maxsize:
+                        self.result.close()
+                        break
+                    chunk = self.result.read(chunk_size)
+            else:
+                content = self.result.read()
+            return content
         return None

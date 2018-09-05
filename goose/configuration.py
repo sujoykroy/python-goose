@@ -111,6 +111,9 @@ class Configuration(object):
         #html fetcher class
         self.htmlfetcher_class = None
 
+        #url download size limit in bytes
+        self.html_download_max_size = 0
+
     def get_parser(self):
         return AVAILABLE_PARSERS[self.parser_class]
 
