@@ -44,7 +44,7 @@ class Parser(object):
         if isinstance(nodes, list):
             for node in nodes:
                 node.drop_tag()
-        else:
+        elif hasattr(nodes, 'drop_tag'):
             nodes.drop_tag()
 
     @classmethod
