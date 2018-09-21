@@ -290,6 +290,8 @@ class Crawler(object):
 
         # fetch HTML
         html = self.htmlfetcher.get_html(parsing_candidate.url)
+        if not html:
+            html = ""
         crawl_candidate.raw_html = html
 
         #Twitter/Facebook specific news crawling. Should be transferred to separate module.
