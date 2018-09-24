@@ -114,6 +114,8 @@ class Configuration(object):
         #url download size limit in bytes
         self.html_download_max_size = 0
 
+        self.logger = None
+
     def get_parser(self):
         return AVAILABLE_PARSERS[self.parser_class]
 

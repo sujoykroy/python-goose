@@ -47,13 +47,20 @@ class HtmlFetcher(object):
         self.request = urllib2.Request(
                         url,
                         headers=self.headers)
+        if self.config.logger:
+            self.config.logger.info('fetching start for url:{0}'.format(url))
         # do request
         try:
             self.result = urllib2.urlopen(
                             self.request,
                             timeout=self.config.http_timeout)
-        except Exception:
+        except Exception as ex:
+            if self.config.logger:
+                self.config.logger.error('fetching error: {0}'.format(ex))
             self.result = None
+
+        if self.config.logger:
+            self.config.logger.info('fetching ends')
 
         # read the result content
         if self.result is not None:
@@ -65,6 +72,8 @@ class HtmlFetcher(object):
                 while chunk:
                     content += chunk
                     if len(content) > maxsize:
+                        if self.config.logger:
+                            self.config.logger.debug('fetched content is truncated')
                         self.result.close()
                         break
                     chunk = self.result.read(chunk_size)

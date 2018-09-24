@@ -131,6 +131,9 @@ class Crawler(object):
         # parser candidate
         parse_candidate = self.get_parse_candidate(crawl_candidate)
 
+        if self.config.logger:
+            self.config.logger.info('crawl begins. crawl_sub={0}'.format(crawl_sub))
+
         if crawl_candidate.doc is None:
             # raw html
             raw_html = self.get_html(crawl_candidate, parse_candidate)
@@ -259,6 +262,8 @@ class Crawler(object):
                     continue
                 active_sub_articles.append(sub_article)
                 crawler = Crawler(self.config)
+                if self.config.logger:
+                    self.config.logger.info('sub-crawl for index: {0}'.format(i))
                 crawled_article = crawler.crawl(
                     CrawlCandidate(
                         self.config, None, raw_html=sub_article.outer_html),
@@ -268,6 +273,8 @@ class Crawler(object):
             del self.article.sub_articles[:]
             self.article.sub_articles.extend(active_sub_articles)
         # return the article
+        if self.config.logger:
+            self.config.logger.info('crawl ends. crawl_sub={0}'.format(crawl_sub))
         return self.article
 
     def get_parse_candidate(self, crawl_candidate):
