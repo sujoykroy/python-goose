@@ -85,7 +85,9 @@ class LinksExtractor(BaseExtractor):
 
     def get_clean_href(self, href):
         if href[0] == "/" and href[1:2] != "/":#exlcude //ww.abc.com type names
-            href = self.article.site_domain + href[1:]
+            if self.article.site_domain and self.article.site_domain[-1] == '/':
+                href = href[1:]
+            href = self.article.site_domain + href
         else:
             link_site_domain = goose.text.get_site_domain(href)
             if self.article.site_domain and link_site_domain != self.article.site_domain:
