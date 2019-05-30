@@ -173,6 +173,10 @@ class ImageExtractionTests(TestExtractionBase):
         article = self.getArticle()
         self._test_known_image_css(article)
 
+    def test_ahvalnews_image(self):
+        article = self.getArticle()
+        fields = ['top_image']
+        self.runArticleAssertions(article=article, fields=fields)
 
 class ImageUtilsTests(unittest.TestCase):
 

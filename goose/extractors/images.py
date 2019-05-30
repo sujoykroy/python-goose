@@ -35,6 +35,7 @@ KNOWN_IMG_DOM_NAMES = [
     "cnn_strylccimg300cntr",
     "big_photo",
     "ap-smallphoto-a",
+    "vb-article-image-top"
 ]
 
 
@@ -74,6 +75,8 @@ class ImageExtractor(BaseExtractor):
         )
 
     def get_best_image(self, doc, topNode):
+        # the webpage url that we're extracting content from
+        self.target_url = self.article.final_url
         image = self.check_known_elements()
         if image:
             return image

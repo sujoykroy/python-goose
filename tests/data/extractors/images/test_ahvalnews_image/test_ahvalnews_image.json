@@ -1,0 +1,10 @@
+{
+    "url" : "https://ahvalnews.com/pro-government-media/opposition-pushes-reveal-turkish-govts-use-public-resources-dominate-media",
+    "expected": {
+        "top_image": {
+            "extraction_type": "known",
+            "src": "https://ahvalnews.com/sites/default/files/styles/is_article_featured_top_1920x600/public/2018-01/echr_afp_fredeick_florin.jpg?h=7bd4356d&itok=PoEa_u-w",
+            "confidence_score": 90
+        }
+    }
+}
