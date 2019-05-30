@@ -26,12 +26,13 @@ from goose.extractors import BaseExtractor
 
 KNOWN_AUTHOR_TAGS = [
     {'attribute': 'class', 'value': 'ng_byline_name', 'content': None},
+    {'attribute': 'class', 'value': 'author-name', 'content': None},
     {'xpath': "descendant::*[contains(@class, 'byline')]", 'content': None},
 ]
 
 class AuthorsExtractor(BaseExtractor):
     AUTHOR_REPLACER = re.compile("(^by\s+)|([\|\/].+)", flags=re.IGNORECASE)
-    AUTHOR_SPLITTER = re.compile(r"\band\b|,", flags=re.IGNORECASE)
+    AUTHOR_SPLITTER = re.compile(ur"\band\b|,", flags=re.IGNORECASE|re.U)
 
     def extract(self):
         authors = []
@@ -39,7 +40,6 @@ class AuthorsExtractor(BaseExtractor):
                             self.article.doc,
                             attr='itemprop',
                             value='author')
-
         for author_node in author_nodes:
             name_nodes = self.parser.getElementsByTag(
                             author_node,

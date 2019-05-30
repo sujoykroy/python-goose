@@ -1,0 +1,12 @@
+{
+    "url" : "https://ahvalnews.com/pro-government-media/opposition-pushes-reveal-turkish-govts-use-public-resources-dominate-media",
+    "expected": {
+        "domain": "ahvalnews.com",
+        "publish_date": "Apr 16 2019",
+        "authors": [],
+        "top_image": {
+            "src": "/sites/default/files/styles/is_article_featured_top_1920x600/public/2018-01/echr_afp_fredeick_florin.jpg?h=7bd4356d&itok=PoEa_u-w"
+        },
+        "cleaned_text": "The European Court of Human Rights (ECHR) on Tuesday ruled that the detention of a Turkish Constitutional Court judge following the country’s 2016 coup attempt was unlawful.\n\nAlparslan Altan was detained on July 16, 2016, a day after the failed putsch, and was arrested by an Ankara court four days later. The judge remained in pre-trial detention until January 2018, when he was indicted. A prosecutor demanded an 11 year and three month prison sentence for Altan over links to the Gülen movement, which Ankara designates a terrorist organisation and accuses of orchestrating the failed coup attempt."
+    }
+}

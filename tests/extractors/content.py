@@ -270,6 +270,18 @@ class TestExtractions(TestExtractionBase):
         fields = ['json_ld']
         self.runArticleAssertions(article=article, fields=fields)
 
+    def test_ahvalnews1(self):
+        article = self.getArticle()
+        fields = ['cleaned_text', "publish_date", "authors"]
+        self.runArticleAssertions(article=article, fields=fields)
+        self.assertTrue(len(article.sub_articles)> 0)
+
+    def test_ahvalnews2(self):
+        article = self.getArticle()
+        fields = ['cleaned_text', "publish_date", "authors"]
+        self.runArticleAssertions(article=article, fields=fields)
+        self.assertTrue(len(article.sub_articles)> 0)
+
 class TestArticleTopNode(TestExtractionBase):
 
     def test_articlebody_itemprop(self):
@@ -524,7 +536,7 @@ class TestSubArticleExtraction(TestExtractionBase):
         self.assertEqual(42, len(article.sub_articles))
         self.assertEqual(
             article.sub_articles[0].crawled_article.title[0:20],
-            "Donald Trump Runs For Governor"[0:20])
+            "Why Kansas Liberals Want a Trump Supporter"[0:20])
         self.assertEqual(
             article.sub_articles[39].crawled_article.title[0:20],
             "Top Trump Campaign Aides Are Portrayed"[0:20])

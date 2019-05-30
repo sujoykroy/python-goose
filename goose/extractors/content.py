@@ -33,6 +33,7 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
     {'attr': 'id', 'value': 'story-body-items'},
+    {'attr': 'class', 'value': 'node--type-article'},
     {'tag': 'article', 'attr': 'class', 'value': 'content'},
     {'tag': 'article'},
     {'xpath': "descendant::*[not(ancestor::article) and @itemtype='http://schema.org/Article']"},

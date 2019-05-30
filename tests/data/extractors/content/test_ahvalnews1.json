@@ -1,0 +1,9 @@
+{
+    "url" : "https://ahvalnews.com/pro-government-media/opposition-pushes-reveal-turkish-govts-use-public-resources-dominate-media",
+    "expected": {
+        "domain": "ahvalnews.com",
+        "publish_date": "May 24 2019",
+        "authors": ["Zülfikar Doğan"],
+        "cleaned_text": "A motion by Turkey’s main opposition party to investigate the use of public funding in the media sector is likely to reveal the details of how President Recep Tayyip Erdoğan's built his own partisan media empire and financed his close political circle.\n\nTurkey's main opposition Republican People's Party (CHP) Istanbul deputy Erdoğan Toprak on May 22 has proposed a parliamentary inquiry into the siphoning of public resources to fund pro-government media."
+    }
+}

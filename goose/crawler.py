@@ -250,17 +250,14 @@ class Crawler(object):
             # clean_text
             self.article.cleaned_text = self.formatter.get_formatted_text(
                 remove_fewwords=crawl_sub)
-
         # cleanup tmp file
         self.release_resources()
-
         if crawl_sub and len(self.article.sub_articles) > 1:
             active_sub_articles = []
             for i in range(len(self.article.sub_articles)):
                 sub_article = self.article.sub_articles[i]
                 if sub_article.node == self.article.doc:
                     continue
-                active_sub_articles.append(sub_article)
                 crawler = Crawler(self.config)
                 if self.config.logger:
                     self.config.logger.info('sub-crawl for index: {0}'.format(i))
@@ -270,11 +267,23 @@ class Crawler(object):
                     crawl_sub=False
                 )
                 sub_article.crawled_article = crawled_article
+                active_sub_articles.append(sub_article)
+
             del self.article.sub_articles[:]
             self.article.sub_articles.extend(active_sub_articles)
+
         # return the article
         if self.config.logger:
             self.config.logger.info('crawl ends. crawl_sub={0}'.format(crawl_sub))
+        if crawl_sub and self.article.sub_articles:
+            self.article.sub_articles.sort(
+                    key=lambda obj: -len(obj.cleaned_text))
+            if not self.article.cleaned_text:
+                self.article.cleaned_text = \
+                    self.article.sub_articles[0].crawled_article.cleaned_text
+            if not self.article.authors:
+                self.article.authors = \
+                    self.article.sub_articles[0].authors
         return self.article
 
     def get_parse_candidate(self, crawl_candidate):
