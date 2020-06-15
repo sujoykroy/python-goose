@@ -35,3 +35,8 @@ class TestTitle(TestExtractionBase):
         article = self.getArticle()
         fields = ['title']
         self.runArticleAssertions(article=article, fields=fields)
+
+    def test_title_bad_og(self):
+        article = self.getArticle()
+        fields = ['title']
+        self.runArticleAssertions(article=article, fields=fields)
