@@ -31,6 +31,7 @@ KNOWN_PUBLISH_DATE_TAGS = [
     {'attribute': 'id', 'value': 'publish_date', 'content': None},
     {'attribute': 'class', 'value': 'authored-on'},
     {'attribute': 'class', 'value': 'times', 'content': None},
+    {'attribute': 'class', 'value': 'date', 'content': None},
 ]
 
 

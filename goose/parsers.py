@@ -91,7 +91,8 @@ class Parser(object):
         # selector = tag or '*'
         selector = 'descendant-or-self::%s' % (tag or '*')
         if attr and value:
-            selector = '%s[re:test(@%s, "%s", "i")]' % (selector, attr, value)
+            # selector = '%s[re:test(@%s, "%s", "i")]' % (selector, attr, value)
+            selector = "%s[re:match(@%s, '\\b%s\\b', 'i')]" % (selector, attr, value)
         elif attr:
             selector = '%s[@%s]' % (selector, attr)
 

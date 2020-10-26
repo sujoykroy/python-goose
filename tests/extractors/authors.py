@@ -30,3 +30,13 @@ class TestArticleAuthor(TestExtractionBase):
         article = self.getArticle()
         fields = ['authors']
         self.runArticleAssertions(article=article, fields=fields)
+
+    def test_channelpartnersonline(self):
+        article = self.getArticle()
+        fields = ['authors']
+        self.runArticleAssertions(article=article, fields=fields)
+
+    def test_prnewsleader(self):
+        article = self.getArticle()
+        fields = ['authors']
+        self.runArticleAssertions(article=article, fields=fields)

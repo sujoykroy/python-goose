@@ -199,11 +199,6 @@ class Crawler(object):
 
         self.article.doc = self.cleaner.remove_nested_article_tags(self.article.doc)
 
-        for sub_article in self.article.sub_articles:
-            if sub_article.node == self.article.doc:
-                continue
-            self.parser.remove(sub_article.node)
-
         #microdata
         self.article.microdata = self.microdata_extractor.extract()
 
@@ -212,6 +207,11 @@ class Crawler(object):
 
         # title
         self.article.title = self.title_extractor.extract()
+
+        for sub_article in self.article.sub_articles:
+            if sub_article.node == self.article.doc:
+                continue
+            self.parser.remove(sub_article.node)
 
         #hcard
         self.article.hcards = self.hcard_extractor.extract()

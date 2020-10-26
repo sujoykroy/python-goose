@@ -27,12 +27,15 @@ from goose.extractors import BaseExtractor
 KNOWN_AUTHOR_TAGS = [
     {'attribute': 'class', 'value': 'ng_byline_name', 'content': None},
     {'attribute': 'class', 'value': 'author-name', 'content': None},
-    {'xpath': "descendant::*[contains(@class, 'byline')]", 'content': None},
+    {'attribute': 'rel', 'value': 'author', 'content': None},
+    {'xpath': "descendant::*[contains(concat(' ', @class, ' '), ' byline ')]", 'content': None},
+    {'xpath': "descendant::*[contains(@class,'post-author')]/*[@class='meta-text']/a", 'content': None},
 ]
 
 class AuthorsExtractor(BaseExtractor):
     AUTHOR_REPLACER = re.compile("(^by\s+)|([\|\/].+)", flags=re.IGNORECASE)
     AUTHOR_SPLITTER = re.compile(ur"\band\b|,", flags=re.IGNORECASE|re.U)
+    BAD_AUTHOR = re.compile(r"[0-9]")
 
     def extract(self):
         authors = []
@@ -50,7 +53,6 @@ class AuthorsExtractor(BaseExtractor):
                 authors.append(name)
             else:
                 authors.append(self.parser.getText(author_node))
-
         for known_tag in KNOWN_AUTHOR_TAGS:
             if known_tag.get('xpath'):
                 tags = self.parser.xpath_re(self.article.doc, known_tag.get('xpath'))
@@ -98,7 +100,11 @@ class AuthorsExtractor(BaseExtractor):
                 continue
             for author in self.AUTHOR_SPLITTER.split(full_author):
                 author = self.AUTHOR_REPLACER.sub("", author).strip()
+                if not author:
+                    continue
                 if author.lower() in author_keys:
+                    continue
+                if self.BAD_AUTHOR.match(author):
                     continue
                 author_keys[author.lower()] = True
                 clean_authors.append(author)

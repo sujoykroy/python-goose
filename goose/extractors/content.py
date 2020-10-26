@@ -32,6 +32,7 @@ KNOWN_ARTICLE_CONTENT_TAGS = [
     {'attr': 'itemprop', 'value': 'articleBody'},
     {'attr': 'class', 'value': 'post-content'},
     {'attr': 'class', 'value': 'article-body'},
+    {'attr': 'class', 'value': 'article-view'},
     {'attr': 'id', 'value': 'story-body-items'},
     {'attr': 'class', 'value': 'node--type-article'},
     {'tag': 'article', 'attr': 'class', 'value': 'content'},
