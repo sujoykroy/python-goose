@@ -278,7 +278,8 @@ class Crawler(object):
         if crawl_sub and self.article.sub_articles:
             self.article.sub_articles.sort(
                     key=lambda obj: -len(obj.cleaned_text))
-            if not self.article.cleaned_text:
+            if not self.article.cleaned_text and \
+               self.article.sub_articles[0].crawled_article:
                 self.article.cleaned_text = \
                     self.article.sub_articles[0].crawled_article.cleaned_text
             if not self.article.authors:
